@@ -44,31 +44,39 @@ Client → API → DB → Queue → Worker → AI → Campaign → Leads → Ana
 ---
 
 ## 🚀 Current Phase
-Phase G0 — Governance Setup
+
+Phase G2 — Backend Verification
 
 ---
 
 ## ✅ Completed
-- [ ] Global folder structure
-- [ ] GitHub initialized
-- [ ] PROJECT_CONTEXT.md created
+
+* Governance setup (structure, GitHub, PROJECT_CONTEXT.md)
+* Infrastructure setup (Docker containers running)
+* PostgreSQL, Redis, n8n, Grafana active
+* Redis verified (PONG)
 
 ---
 
 ## 🔄 In Progress
-- Governance setup
+
+* Backend audit (checking existing code)
 
 ---
 
 ## ⏭️ Next Steps
-- System audit
-- Backend alignment
-- Redis + workers
+
+* Verify backend structure
+* Decide rebuild vs reuse
+* Start clean backend inside /backend
+* Connect FastAPI to PostgreSQL and Redis
 
 ---
 
 ## ⚠️ Known Issues
-- Not audited yet
+
+* FastAPI not running
+* Backend not verified yet
 
 ---
 
