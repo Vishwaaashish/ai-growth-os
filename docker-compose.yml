@@ -1,0 +1,76 @@
+version: "3.9"
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: infrastructure-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+ 
+  redis:
+    image: redis:7
+    container_name: infrastructure-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  odoo:
+    image: odoo:17
+    container_name: infrastructure-odoo
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo
+
+  n8n:
+    image: n8nio/n8n
+    container_name: infrastructure-n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin123
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Asia/Kolkata
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  prometheus:
+    image: prom/prometheus
+    container_name: infrastructure-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    container_name: infrastructure-grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  postgres_data:
+  n8n_data:
+  grafana_data:
