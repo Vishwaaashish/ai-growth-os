@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .env
 *.log
+*.db
+node_modules/
+.n8n/
