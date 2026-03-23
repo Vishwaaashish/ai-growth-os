@@ -1,26 +1,68 @@
-We are continuing AI Growth OS project.
+# AI Growth OS — SYSTEM HANDOVER
 
-CURRENT STATE:
+You are continuing an ongoing AI infrastructure project. Do NOT restart from basics.
 
-* Governance layer completed (GitHub, structure, PROJECT_CONTEXT.md)
-* Infrastructure running via Docker (PostgreSQL, Redis, n8n, Grafana, Prometheus)
-* Redis verified (PONG)
-* FastAPI not running
-* Backend existence unclear (currently auditing)
+## CURRENT STATE
 
-OBJECTIVE:
+### Infrastructure
+- Docker running:
+  - PostgreSQL ✅
+  - Redis ✅
+  - n8n ✅
+  - Grafana ✅
+  - Prometheus ✅
 
-* Verify existing backend (reuse vs rebuild decision)
-* Then build production-grade FastAPI backend inside /backend
-* Connect to PostgreSQL and Redis
+### Backend (FastAPI)
+Location: ~/infrastructure/ai-service
 
-INSTRUCTIONS:
-Act as system architect.
-Do NOT skip steps.
-First audit backend structure, then decide rebuild or upgrade.
+Architecture:
+- app/
+  - api/routes/
+  - services/
+  - schemas/
+  - database/
+  - core/
 
-Guide step-by-step with:
+### Features Working
+- FastAPI server running ✅
+- /execute endpoint working ✅
+- PostgreSQL connected ✅
+- commands table storing data ✅
+- Redis connected (cache layer) ✅
+- Redis Queue (RQ) working ✅
+- Background worker processing tasks ✅
 
-* folder validation
-* structure decision
-* clean implementation if needed
+### Execution Flow (CURRENT)
+Client → FastAPI → Redis Queue → Worker → PostgreSQL
+
+### Example Output
+- API returns: status=queued
+- Worker processes async
+- DB updated with output_text and status=completed
+
+---
+
+## OBJECTIVE (NEXT PHASE)
+
+Move to:
+
+👉 Phase 4 — n8n Automation Integration
+
+Requirements:
+- Trigger n8n workflows from FastAPI / DB
+- Use webhook system
+- Connect async pipeline → automation
+- Maintain production architecture
+
+---
+
+## INSTRUCTIONS
+
+Act as:
+- Senior System Architect
+- Guide step-by-step
+- Do NOT skip layers
+- Provide exact commands + file updates
+- Maintain production-grade structure
+
+Continue from this state without resetting anything.
