@@ -1,12 +1,10 @@
 from fastapi import FastAPI
-from app.api.execute import router as execute_router
+from app.api.router import router
 
 app = FastAPI()
 
-# Health check endpoint
 @app.get("/")
 def root():
-    return {"message": "AI Growth OS Backend Running"}
+    return {"message": "AI Growth OS Running"}
 
-# Register execution route
-app.include_router(execute_router)
+app.include_router(router)
