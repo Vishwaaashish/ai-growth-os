@@ -1,3 +1,82 @@
+# PROJECT CONTEXT — AI Growth OS
+
+## ✅ CURRENT PHASE: Phase 6 COMPLETED
+
+### 🧠 System Overview
+
+AI Growth OS is a modular execution system that processes jobs using:
+
+- FastAPI (API layer)
+- PostgreSQL (job storage)
+- Redis (queue system)
+- RQ Worker (execution engine)
+- Service Layer (AI, Automation, Scraper)
+- n8n (external automation)
+
+---
+
+## ✅ COMPLETED CAPABILITIES
+
+### 1. Job Execution System
+- Create jobs via API
+- Store jobs in DB
+- Queue jobs in Redis
+- Execute via worker
+
+### 2. AI Execution Engine
+- Processes prompts dynamically
+- Returns structured responses
+
+### 3. Automation Integration
+- Sends payload to n8n webhook
+- Receives response
+
+### 4. Scraper System
+- Fetches external URLs
+- Returns response status
+
+### 5. Execution Routing
+- Dynamic service selection (AI / automation / scraper)
+
+### 6. Result Persistence
+- Stores output in DB
+- Tracks job status (pending, completed, failed)
+
+---
+
+## 🔁 SYSTEM FLOW
+
+Client → API → DB → Redis → Worker → Service → DB
+
+---
+
+## ⚠️ KNOWN STATE
+
+- Old jobs may remain in "pending" state (before executor fix)
+- System stable and validated end-to-end
+
+---
+
+## 🚀 NEXT PHASE
+
+### Phase 7 — AI Decision Engine
+
+Goal:
+- Multi-step execution
+- AI decides workflow dynamically
+
+Example:
+Input → AI → Scrape → Analyze → Automate
+
+---
+
+## 🧠 ARCHITECTURE LEVEL
+
+System has transitioned from:
+- Backend system ❌
+to
+- AI execution infrastructure ✅
+
 # AI Growth OS — Project Context
 
 ## ✅ Completed Phases
