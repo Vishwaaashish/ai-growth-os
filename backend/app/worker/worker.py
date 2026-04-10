@@ -1,24 +1,33 @@
-import redis
-from rq import Worker, Queue, Connection
+from rq import Worker, Queue
+from app.queue.redis import redis_conn
+from app.core.metrics import job_retry_total
 
-# Import your execution logic
-from app.workers.executor import execute_job
+# ---------------------------
+# QUEUES CONFIG
+# ---------------------------
 
-# Redis connection
-redis_conn = redis.Redis(host="localhost", port=6379)
+listen = ["high", "default", "low", "dead"]
 
-# Queue name (must match your enqueue logic)
-queue = Queue("default", connection=redis_conn)
+# ---------------------------
+# CUSTOM WORKER (RETRY TRACKING)
+# ---------------------------
 
 
-def job_handler(job, *args, **kwargs):
-    """
-    This function will be called for each job
-    """
-    return execute_job(job)
+class InstrumentedWorker(Worker):
+    def handle_job_failure(self, job, *exc_info):
+        if job.retries_left:
+            job_retry_total.inc()
+        return super().handle_job_failure(job, *exc_info)
 
+
+# ---------------------------
+# WORKER START
+# ---------------------------
 
 if __name__ == "__main__":
-    with Connection(redis_conn):
-        worker = Worker([queue])
-        worker.work()
+    queues = [Queue(name, connection=redis_conn) for name in listen]
+
+    worker = InstrumentedWorker(queues, connection=redis_conn)
+
+    print("🚀 Worker started with metrics enabled...")
+    worker.work()

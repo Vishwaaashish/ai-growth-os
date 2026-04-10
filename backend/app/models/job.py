@@ -1,23 +1,26 @@
-from sqlalchemy import Column, String, DateTime, JSON
-from sqlalchemy.dialects.postgresql import UUID
-import uuid
+from sqlalchemy import Column, Integer, String, Text, DateTime
 from datetime import datetime
-
 from app.db.base import Base
 
 
 class Job(Base):
     __tablename__ = "jobs"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, index=True)
+    id = Column(Integer, primary_key=True, index=True)
 
     type = Column(String, nullable=False)
-    payload = Column(JSON, nullable=True)
 
-    status = Column(String, default="pending")
+    payload = Column(Text, nullable=False)
 
-    result = Column(JSON, nullable=True)
-    error = Column(String, nullable=True)
+    status = Column(String, default="queued")
+
+    result = Column(Text, nullable=True)
+
+    error = Column(Text, nullable=True)
+
+    # 🔴 NEW FIELDS
+    priority = Column(String, default="default")  # high / default / low
+    retries = Column(Integer, default=0)
+    max_retries = Column(Integer, default=3)
 
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

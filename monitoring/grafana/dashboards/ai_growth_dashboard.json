@@ -1,0 +1,49 @@
+{
+  "id": null,
+  "title": "AI Growth OS - System Metrics",
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Job Success",
+      "targets": [
+        { "expr": "job_success_total" }
+      ],
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Job Failures",
+      "targets": [
+        { "expr": "job_failure_total" }
+      ],
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "stat",
+      "title": "Retries",
+      "targets": [
+        { "expr": "job_retry_total" }
+      ],
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 }
+    },
+    {
+      "type": "graph",
+      "title": "Queue Size",
+      "targets": [
+        { "expr": "queue_size" }
+      ],
+      "gridPos": { "x": 0, "y": 5, "w": 24, "h": 8 }
+    },
+    {
+      "type": "graph",
+      "title": "Worker Execution Time",
+      "targets": [
+        { "expr": "rate(worker_execution_time_seconds_sum[1m])" }
+      ],
+      "gridPos": { "x": 0, "y": 14, "w": 24, "h": 8 }
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1
+}

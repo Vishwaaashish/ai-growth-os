@@ -1,0 +1,28 @@
+groups:
+  - name: system_alerts
+    rules:
+
+      - alert: HighQueueSize
+        expr: queue_size > 5
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Queue size too high"
+
+      - alert: JobFailuresIncreasing
+        expr: increase(job_failure_total[2m]) > 0
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Job failures increasing"
+
+      - alert: HighWorkerLatency
+        expr: rate(worker_execution_time_seconds_sum[2m]) 
+              / rate(worker_execution_time_seconds_count[2m]) > 1
+        for: 10s
+        labels:
+          severity: warning
+        annotations:
+          summary: "Worker latency high"

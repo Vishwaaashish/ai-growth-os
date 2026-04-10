@@ -1,43 +1,38 @@
-from app.db.session import SessionLocal
-from app.models.job import Job
-from app.services.ai_service import run_ai
-from app.services.scraper_service import run_scraper
-from app.services.automation_service import run_automation
+import time
+
+from app.worker.executor import execute_job
+from app.core.metrics import job_success_total, job_failure_total, worker_execution_time
+
+# ---------------------------
+# INSTRUMENTATION WRAPPER
+# ---------------------------
 
 
-def execute_job(job_id: str):
-    db = SessionLocal()
+def instrumented_task(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
 
-    try:
-        job = db.query(Job).filter(Job.id == job_id).first()
+        try:
+            result = func(*args, **kwargs)
+            job_success_total.inc()
+            return result
 
-        if not job:
-            print(f"Job not found: {job_id}")
-            return
+        except Exception:
+            job_failure_total.inc()
+            raise
 
-        job.status = "running"
-        db.commit()
+        finally:
+            duration = time.time() - start
+            worker_execution_time.observe(duration)
 
-        if job.type == "ai":
-            result = run_ai(job.payload)
+    return wrapper
 
-        elif job.type == "scrape":
-            result = run_scraper(job.payload)
 
-        elif job.type == "automation":
-            result = run_automation(job.payload)
+# ---------------------------
+# ACTUAL TASK (INSTRUMENTED)
+# ---------------------------
 
-        else:
-            raise Exception("Unknown job type")
 
-        job.status = "completed"
-        job.result = result
-        db.commit()
-
-    except Exception as e:
-        job.status = "failed"
-        job.result = str(e)
-        db.commit()
-
-    finally:
-        db.close()
+@instrumented_task
+def run_job(job_id: str):
+    return execute_job(job_id)

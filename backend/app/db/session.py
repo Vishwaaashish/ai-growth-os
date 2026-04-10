@@ -1,18 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.orm import sessionmaker
 
-# 🔥 Update this based on your working DB credentials
-DATABASE_URL = "postgresql://odoo:odoo@localhost:5432/postgres"
+DATABASE_URL = "postgresql://odoo:odoo@localhost:5432/ai_growth"
 
-# Engine
-engine = create_engine(DATABASE_URL)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
-# Session
-SessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
-)
-
-# Base class for models
-Base = declarative_base()
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

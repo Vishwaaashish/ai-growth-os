@@ -1,0 +1,44 @@
+{
+  "title": "AI Growth OS - Queue Metrics",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Queue Size",
+      "targets": [
+        {
+          "expr": "queue_size",
+          "legendFormat": "{{queue_name}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Job Success",
+      "targets": [
+        {
+          "expr": "job_success_total"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Job Failures",
+      "targets": [
+        {
+          "expr": "job_failure_total"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Worker Execution Time",
+      "targets": [
+        {
+          "expr": "worker_execution_time_seconds_sum"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1
+}

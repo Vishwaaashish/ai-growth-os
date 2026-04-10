@@ -5,8 +5,4 @@ def run_ai(payload: dict):
         return {"error": "No prompt provided"}
 
     # Temporary AI response (Phase 6.1)
-    return {
-        "status": "success",
-        "type": "ai",
-        "response": f"[AI GENERATED]: {prompt}"
-    }
+    return {"status": "success", "type": "ai", "response": f"[AI GENERATED]: {prompt}"}
