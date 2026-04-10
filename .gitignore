@@ -1,21 +1,18 @@
 # Python
 __pycache__/
 *.pyc
-*.pyo
 
-# venv
+# Virtual Environment
 venv/
 
-# env
+# Environment Variables
 .env
 
-# OS
+# Logs
+*.log
+
+# OS Files
 .DS_Store
 
-
-venv/
-__pycache__/
-*.pyc
-.env
-*.log
-backups/
+# Backups
+backup/
