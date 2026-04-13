@@ -1,0 +1,33 @@
+from rq import Worker, Queue
+from app.queue.redis import redis_conn
+from app.core.metrics import job_retry_total
+
+# ---------------------------
+# QUEUES CONFIG
+# ---------------------------
+
+listen = ["high", "default", "low", "dead"]
+
+# ---------------------------
+# CUSTOM WORKER (RETRY TRACKING)
+# ---------------------------
+
+
+class InstrumentedWorker(Worker):
+    def handle_job_failure(self, job, *exc_info):
+        if job.retries_left:
+            job_retry_total.inc()
+        return super().handle_job_failure(job, *exc_info)
+
+
+# ---------------------------
+# WORKER START
+# ---------------------------
+
+if __name__ == "__main__":
+    queues = [Queue(name, connection=redis_conn) for name in listen]
+
+    worker = InstrumentedWorker(queues, connection=redis_conn)
+
+    print("🚀 Worker started with metrics enabled...")
+    worker.work()

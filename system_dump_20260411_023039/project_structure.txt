@@ -1,0 +1,121 @@
+.
+├── archive
+│   ├── ai-service-backup
+│   │   ├── app
+│   │   ├── database.py
+│   │   ├── deps.py
+│   │   ├── init_db.py
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   ├── redis_client.py
+│   │   ├── requirements.txt
+│   │   ├── test_db.py
+│   │   └── worker.py
+│   ├── app
+│   │   ├── api
+│   │   ├── core
+│   │   ├── database
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── schemas
+│   │   └── services
+│   ├── deps.py
+│   ├── init_db.py
+│   ├── redis_client.py
+│   ├── requirements.txt
+│   ├── test_db.py
+│   └── worker.py
+├── backend
+│   ├── app
+│   │   ├── adapters
+│   │   ├── agents
+│   │   ├── api
+│   │   ├── contracts.py
+│   │   ├── core
+│   │   ├── db
+│   │   ├── decision_engine.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   ├── orchestrator
+│   │   ├── planner
+│   │   ├── queue
+│   │   ├── routing
+│   │   ├── schemas
+│   │   ├── services
+│   │   └── worker
+│   ├── PROJECT_CONTEXT.md
+│   ├── requirements.txt
+│   ├── test.db
+│   └── worker.py
+├── backup_phase3.sql
+├── backups
+│   ├── code
+│   ├── db
+│   └── db-2026-03-16.sql
+├── backup.sql
+├── CHANGELOG.md
+├── docker-compose.backup.yml
+├── docker-compose.old
+├── docker-compose.yml
+├── docker-compose.yml.backup
+├── docker-compose.yml.save
+├── docker-compose.yml.save.1
+├── docs
+│   ├── api
+│   │   └── endpoints.md
+│   ├── architecture
+│   │   └── system_design.md
+│   ├── database
+│   │   └── schema.md
+│   ├── governance
+│   │   └── execution_rules.md
+│   ├── MASTER_PHASE_STATE.md
+│   ├── process
+│   │   ├── agile.md
+│   │   ├── client_lifecycle.md
+│   │   ├── sdlc.md
+│   │   └── sop.md
+│   └── workflows
+│       └── n8n_flows.md
+├── .env.example
+├── frontend
+├── .gitignore
+├── HANDOFF_PROMPT.md
+├── infra
+│   ├── docker-compose.yml
+│   ├── grafana
+│   ├── nginx
+│   ├── prometheus
+│   └── prometheus.yml
+├── monitoring
+│   ├── alertmanager
+│   │   └── alertmanager.yml
+│   ├── alerts.yml
+│   ├── grafana
+│   │   ├── dashboards
+│   │   └── provisioning
+│   ├── prometheus
+│   │   ├── alert_rules.yml
+│   │   └── prometheus.yml
+│   └── prometheus.yml
+├── n8n
+│   └── workflows
+├── nginx
+│   └── default.conf
+├── odoo.yml
+├── PROJECT_CONTEXT.md
+├── prometheus.yml
+├── README.md
+├── scripts
+│   ├── backup.sh
+│   ├── dump_system.sh
+│   └── setup.sh
+├── stacks
+│   ├── analytics.yml
+│   ├── automation.yml
+│   ├── gateway.yml
+│   └── monitoring.yml
+└── system_dump_20260411_023039
+    └── project_structure.txt
+
+52 directories, 67 files

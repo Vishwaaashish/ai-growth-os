@@ -2,6 +2,13 @@ import time
 import random
 import redis
 import os
+import logging
+
+logging.basicConfig(
+    filename="worker.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 r = redis.Redis(host=REDIS_HOST, port=6379, decode_responses=True)

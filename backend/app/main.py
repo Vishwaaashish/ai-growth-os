@@ -27,6 +27,10 @@ from app.planner.plan_executor import PlanExecutor
 from app.planner.goal_store import GoalStore
 
 app = FastAPI()
+
+from app.api.routes.job import router as job_router
+app.include_router(job_router)
+
 logging.basicConfig(level=logging.INFO)
 
 # =========================
@@ -90,18 +94,7 @@ def metrics():
 # =========================
 # JOB PRODUCER
 # =========================
-@app.post("/job")
-def add_job():
-    job_id = f"job-{random.randint(1000,9999)}"
-    redis_client.rpush("job_queue", job_id)
 
-    size = redis_client.llen("job_queue")
-    queue_size.set(size)
-
-    if random.random() < 0.3:
-        job_failure_total.inc()
-
-    return {"job": job_id, "queue": size}
 
 
 # =========================

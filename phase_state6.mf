@@ -1,0 +1,96 @@
+SYSTEM:
+  name: AI Growth OS
+  architecture: multi-phase autonomous system
+  level: L3
+  current_phase: Phase 6 (Learning System)
+
+INFRA:
+  docker:
+    postgres: running
+    redis: running
+    grafana: running
+    prometheus: running
+    n8n: running
+
+BACKEND:
+  framework: FastAPI
+  multi_tenant: true
+  entrypoint: app.main:app
+
+DATABASE:
+  type: PostgreSQL
+  connection: postgresql://odoo:odoo@localhost:5432/postgres
+  tables:
+    - jobs
+    - actions_log
+    - outcomes_log
+    - learning_insights
+    - policies
+
+QUEUE:
+  system: Redis + RQ
+  queues:
+    - high
+    - default
+    - low
+    - dead
+
+WORKER:
+  type: RQ Worker
+  custom: InstrumentedWorker
+  status: stable
+
+EXECUTION_ENGINE:
+  file: app/worker/executor.py
+  capabilities:
+    - job execution
+    - retry logic
+    - failure handling
+    - DB logging
+    - learning feedback push
+
+LEARNING_SYSTEM:
+  mode: hybrid (rule + ML-ready)
+  memory:
+    short_term: Redis (learning:stream, learning:buffer)
+    long_term: PostgreSQL (actions_log, outcomes_log, learning_insights)
+  collector:
+    file: app/core/learning/collectors/feedback_collector.py
+    status: active
+  stream:
+    key: learning:stream
+    serialization: JSON string
+    status: working
+
+FEEDBACK_LOOP:
+  flow:
+    - action executed
+    - outcome stored (DB)
+    - feedback pushed (Redis)
+    - ready for processing
+
+OBSERVABILITY:
+  metrics: Prometheus
+  dashboards: Grafana
+  logs:
+    - server.log
+    - worker.log
+
+VALIDATION_STATUS:
+  api: working
+  queue: working
+  worker: stable
+  execution: successful
+  db_logging: working
+  learning_stream: working
+
+KNOWN_CONSTRAINTS:
+  - Redis requires JSON serialization
+  - RQ worker requires kwargs compatibility
+  - error_msg must be used instead of direct exception variable
+
+NEXT_PHASE:
+  Phase 6.1:
+    - learning processor
+    - pattern extraction
+    - insight generation

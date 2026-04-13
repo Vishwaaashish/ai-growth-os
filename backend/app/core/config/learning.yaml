@@ -1,0 +1,14 @@
+learning:
+  mode: hybrid
+  retention_days: 30
+
+policy:
+  auto_apply: true
+  human_override: true
+  approval_required_for:
+    - scale_up > 3
+    - destructive_actions
+
+limits:
+  max_scale: 10
+  max_retries: 5

@@ -1,0 +1,10 @@
+1b8e916 added dump system script
+ed2015f added setup script
+8e8934f clean gitignore
+c743693 meaningful message
+f89ae0f system consolidation - removed duplicates
+bdd9196 Phase 0 — Governance system setup
+bfc19ad Phase 0 — Governance system setup
+fb45999 Updated project context after Phase 6 completion
+dcfb4a2 Phase 6 completed: AI execution engine, queue system, worker routing, result persistence, n8n integration
+418818e Phase 5 complete: Worker + Queue + Service Layer + Clean Architecture

@@ -1,0 +1,276 @@
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root           1  0.0  0.1  23592 14236 ?        Ss   Apr10   0:08 /sbin/init splash
+root           2  0.0  0.0      0     0 ?        S    Apr10   0:00 [kthreadd]
+root           3  0.0  0.0      0     0 ?        S    Apr10   0:00 [pool_workqueue_release]
+root           4  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-rcu_gp]
+root           5  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-sync_wq]
+root           6  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-kvfree_rcu_reclaim]
+root           7  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-slub_flushwq]
+root           8  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-netns]
+root          10  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/0:0H-events_highpri]
+root          13  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-mm_percpu_wq]
+root          14  0.1  0.0      0     0 ?        S    Apr10   0:26 [ksoftirqd/0]
+root          15  0.0  0.0      0     0 ?        I    Apr10   0:10 [rcu_preempt]
+root          16  0.0  0.0      0     0 ?        S    Apr10   0:00 [rcu_exp_par_gp_kthread_worker/0]
+root          17  0.0  0.0      0     0 ?        S    Apr10   0:00 [rcu_exp_gp_kthread_worker]
+root          18  0.0  0.0      0     0 ?        S    Apr10   0:00 [migration/0]
+root          19  0.0  0.0      0     0 ?        S    Apr10   0:00 [idle_inject/0]
+root          20  0.0  0.0      0     0 ?        S    Apr10   0:00 [cpuhp/0]
+root          21  0.0  0.0      0     0 ?        S    Apr10   0:00 [cpuhp/1]
+root          22  0.0  0.0      0     0 ?        S    Apr10   0:00 [idle_inject/1]
+root          23  0.0  0.0      0     0 ?        S    Apr10   0:00 [migration/1]
+root          24  0.0  0.0      0     0 ?        S    Apr10   0:01 [ksoftirqd/1]
+root          26  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/1:0H-events_highpri]
+root          27  0.0  0.0      0     0 ?        S    Apr10   0:00 [cpuhp/2]
+root          28  0.0  0.0      0     0 ?        S    Apr10   0:00 [idle_inject/2]
+root          29  0.0  0.0      0     0 ?        S    Apr10   0:00 [migration/2]
+root          30  0.0  0.0      0     0 ?        S    Apr10   0:13 [ksoftirqd/2]
+root          32  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/2:0H-events_highpri]
+root          33  0.0  0.0      0     0 ?        S    Apr10   0:00 [cpuhp/3]
+root          34  0.0  0.0      0     0 ?        S    Apr10   0:00 [idle_inject/3]
+root          35  0.0  0.0      0     0 ?        S    Apr10   0:00 [migration/3]
+root          36  0.0  0.0      0     0 ?        S    Apr10   0:01 [ksoftirqd/3]
+root          38  0.0  0.0      0     0 ?        I<   Apr10   0:01 [kworker/3:0H-i915_cleanup]
+root          39  0.0  0.0      0     0 ?        S    Apr10   0:00 [kdevtmpfs]
+root          40  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-inet_frag_wq]
+root          41  0.0  0.0      0     0 ?        I    Apr10   0:00 [rcu_tasks_kthread]
+root          42  0.0  0.0      0     0 ?        I    Apr10   0:00 [rcu_tasks_rude_kthread]
+root          43  0.0  0.0      0     0 ?        I    Apr10   0:00 [rcu_tasks_trace_kthread]
+root          44  0.0  0.0      0     0 ?        S    Apr10   0:00 [kauditd]
+root          45  0.0  0.0      0     0 ?        S    Apr10   0:00 [khungtaskd]
+root          47  0.0  0.0      0     0 ?        S    Apr10   0:00 [oom_reaper]
+root          49  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-writeback]
+root          50  0.0  0.0      0     0 ?        S    Apr10   0:06 [kcompactd0]
+root          51  0.0  0.0      0     0 ?        SN   Apr10   0:00 [ksmd]
+root          52  0.0  0.0      0     0 ?        SN   Apr10   0:00 [khugepaged]
+root          53  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-kblockd]
+root          54  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-blkcg_punt_bio]
+root          55  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-kintegrityd]
+root          57  0.0  0.0      0     0 ?        S    Apr10   0:05 [irq/9-acpi]
+root          60  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-tpm_dev_wq]
+root          61  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-ata_sff]
+root          62  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-md]
+root          63  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-md_bitmap]
+root          64  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-edac-poller]
+root          65  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-devfreq_wq]
+root          66  0.0  0.0      0     0 ?        S    Apr10   0:00 [watchdogd]
+root          67  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-quota_events_unbound]
+root          68  0.0  0.0      0     0 ?        I<   Apr10   0:01 [kworker/1:1H-i915_cleanup]
+root          69  0.0  0.0      0     0 ?        S    Apr10   0:01 [kswapd0]
+root          70  0.0  0.0      0     0 ?        S    Apr10   0:00 [ecryptfs-kthread]
+root          71  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-kthrotld]
+root          72  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-acpi_thermal_pm]
+root          73  0.0  0.0      0     0 ?        S    Apr10   0:00 [hwrng]
+root          74  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-mld]
+root          75  0.0  0.0      0     0 ?        I<   Apr10   0:01 [kworker/2:1H-kblockd]
+root          76  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-ipv6_addrconf]
+root          77  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-kstrp]
+root          91  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-charger_manager]
+root         118  0.0  0.0      0     0 ?        I<   Apr10   0:02 [kworker/0:1H-kblockd]
+root         158  0.0  0.0      0     0 ?        S    Apr10   0:00 [scsi_eh_0]
+root         160  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-scsi_tmf_0]
+root         177  0.0  0.0      0     0 ?        S    Apr10   0:00 [scsi_eh_1]
+root         178  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-scsi_tmf_1]
+root         184  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/3:2H-kblockd]
+root         221  0.0  0.0      0     0 ?        S    Apr10   0:02 [jbd2/sda2-8]
+root         222  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-ext4-rsv-conversion]
+root         271  0.0  0.2  67296 20004 ?        S<s  Apr10   0:04 /usr/lib/systemd/systemd-journald
+root         357  0.0  0.1  30708  8080 ?        Ss   Apr10   0:05 /usr/lib/systemd/systemd-udevd
+root         388  0.0  0.0      0     0 ?        S    Apr10   0:00 [psimon]
+root         530  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-kmemstick]
+root         561  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-cfg80211]
+systemd+     639  0.0  0.0  17572  7068 ?        Ss   Apr10   0:14 /usr/lib/systemd/systemd-oomd
+systemd+     650  0.0  0.1  21732 12144 ?        Ss   Apr10   0:02 /usr/lib/systemd/systemd-resolved
+systemd+     652  0.0  0.0  91060  7252 ?        Ssl  Apr10   0:00 /usr/lib/systemd/systemd-timesyncd
+root         673  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-ttm]
+root         776  0.0  0.0      0     0 ?        I<   Apr10   0:00 [kworker/R-ttm]
+root         780  0.0  0.0      0     0 ?        S    Apr10   0:00 [card2-crtc0]
+root         781  0.0  0.0      0     0 ?        S    Apr10   0:00 [card2-crtc1]
+root         782  0.0  0.0      0     0 ?        S    Apr10   0:00 [card2-crtc2]
+avahi        792  0.0  0.0   8680  4436 ?        Ss   Apr10   0:01 avahi-daemon: running [Workstation.local]
+root         793  0.0  0.0  13640  6516 ?        Ss   Apr10   0:00 /usr/libexec/bluetooth/bluetoothd
+message+     795  0.0  0.0  12296  7264 ?        Ss   Apr10   0:10 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+gnome-r+     798  0.0  0.1 439216 15568 ?        Ssl  Apr10   0:00 /usr/libexec/gnome-remote-desktop-daemon --system
+polkitd      801  0.0  0.1 399444 12048 ?        Ssl  Apr10   0:02 /usr/lib/polkit-1/polkitd --no-debug
+root         802  0.0  0.0 322236  7788 ?        Ssl  Apr10   0:00 /usr/libexec/power-profiles-daemon
+root         818  0.0  0.5 2071984 40856 ?       Ssl  Apr10   0:09 /snap/snapd/current/usr/lib/snapd/snapd
+root         819  0.0  0.0 321968  7784 ?        Ssl  Apr10   0:00 /usr/libexec/accounts-daemon
+root         820  0.0  0.0  18100  2864 ?        Ss   Apr10   0:00 /usr/sbin/cron -f -P
+root         821  0.0  0.0 318476  6908 ?        Ssl  Apr10   0:00 /usr/libexec/switcheroo-control
+root         823  0.0  0.1  18176  8696 ?        Ss   Apr10   0:01 /usr/lib/systemd/systemd-logind
+root         824  0.0  0.1 433552 10620 ?        Ssl  Apr10   0:02 /usr/sbin/thermald --systemd --dbus-enable --adaptive
+root         825  0.0  0.1 469876 14312 ?        Ssl  Apr10   0:06 /usr/libexec/udisks2/udisksd
+avahi        828  0.0  0.0   8488  1516 ?        S    Apr10   0:00 avahi-daemon: chroot helper
+root         863  0.0  0.2 345376 18556 ?        Ssl  Apr10   0:10 /usr/sbin/NetworkManager --no-daemon
+root         867  0.0  0.1  18168 11376 ?        Ss   Apr10   0:01 /usr/sbin/wpa_supplicant -u -s -O DIR=/run/wpa_supplicant GROUP=netdev
+syslog       905  0.0  0.0 222572  5784 ?        Ssl  Apr10   0:00 /usr/sbin/rsyslogd -n -iNONE
+root         964  0.0  0.1 392200 12240 ?        Ssl  Apr10   0:00 /usr/sbin/ModemManager
+root        1212  0.0  0.1  47024 11928 ?        Ss   Apr10   0:00 /usr/sbin/cupsd -l
+root        1215  0.0  0.2 120936 18300 ?        Ssl  Apr10   0:00 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal
+root        1228  0.0  0.1 323492  8992 ?        Ssl  Apr10   0:00 /usr/sbin/gdm3
+rtkit       1291  0.0  0.0  88484  3324 ?        SNsl Apr10   0:00 /usr/libexec/rtkit-daemon
+colord      1440  0.0  0.1 328840 14248 ?        Ssl  Apr10   0:00 /usr/libexec/colord
+root        1459  0.0  0.0      0     0 ?        S<   Apr10   0:00 [krfcommd]
+root        1464  0.2  0.5 1876248 47220 ?       Ssl  Apr10   0:41 /usr/bin/containerd
+root        1541  0.0  0.1 328776 11888 ?        Ssl  Apr10   0:07 /usr/libexec/upowerd
+cups-br+    1792  0.0  0.2 268500 18980 ?        Ssl  Apr10   0:00 /usr/sbin/cups-browsed
+root        1794  0.0  0.8 1972552 69456 ?       Ssl  Apr10   0:05 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+kernoops    1802  0.0  0.0  12752  2300 ?        Ss   Apr10   0:00 /usr/sbin/kerneloops --test
+kernoops    1810  0.0  0.0  12752  2340 ?        Ss   Apr10   0:00 /usr/sbin/kerneloops
+root        2168  0.0  0.1 398724 10916 ?        Sl   Apr10   0:00 gdm-session-worker [pam/gdm-password]
+aashish     2180  0.0  0.1  21832 12708 ?        Ss   Apr10   0:05 /usr/lib/systemd/systemd --user
+aashish     2182  0.0  0.0  21468  3612 ?        S    Apr10   0:00 (sd-pam)
+aashish     2192  0.0  0.1 124724 13868 ?        Ssl  Apr10   0:00 /usr/bin/pipewire
+aashish     2193  0.0  0.0 106412  5600 ?        Ssl  Apr10   0:00 /usr/bin/pipewire -c filter-chain.conf
+aashish     2197  0.0  0.2 415616 16732 ?        Ssl  Apr10   0:01 /usr/bin/wireplumber
+aashish     2201  0.0  0.3 134864 26796 ?        Ssl  Apr10   0:00 /usr/bin/pipewire-pulse
+aashish     2213  0.0  0.1 472780 10484 ?        SLsl Apr10   0:00 /usr/bin/gnome-keyring-daemon --foreground --components=pkcs11,secrets --control-directory=/run/user/1000/keyring
+aashish     2214  0.0  0.0  11360  6896 ?        Ss   Apr10   0:04 /usr/bin/dbus-daemon --session --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+aashish     2256  0.0  0.0 693732  7352 ?        Ssl  Apr10   0:00 /usr/libexec/xdg-document-portal
+aashish     2260  0.0  0.0 318112  6156 ?        Ssl  Apr10   0:00 /usr/libexec/xdg-permission-store
+root        2267  0.0  0.0   2712  1980 ?        Ss   Apr10   0:00 fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc
+aashish     2280  0.0  0.0 244344  6152 tty2     Ssl+ Apr10   0:00 /usr/libexec/gdm-wayland-session env GNOME_SHELL_SESSION_MODE=ubuntu /usr/bin/gnome-session --session=ubuntu
+aashish     2286  0.0  0.1 306912 15912 tty2     Sl+  Apr10   0:00 /usr/libexec/gnome-session-binary --session=ubuntu
+aashish     2337  0.0  0.0 162660  6608 ?        Ssl  Apr10   0:00 /usr/libexec/gcr-ssh-agent --base-dir /run/user/1000/gcr
+aashish     2338  0.0  0.0 100224  5560 ?        Ssl  Apr10   0:00 /usr/libexec/gnome-session-ctl --monitor
+aashish     2356  0.0  0.0 322940  7884 ?        Ssl  Apr10   0:00 /usr/libexec/gvfsd
+aashish     2364  0.0  0.0 468384  7264 ?        Sl   Apr10   0:00 /usr/libexec/gvfsd-fuse /run/user/1000/gvfs -f
+aashish     2373  0.0  0.2 529176 17740 ?        Ssl  Apr10   0:00 /usr/libexec/gnome-session-binary --systemd-service --session=ubuntu
+aashish     2396  0.0  0.0 382956  7652 ?        Sl   Apr10   0:00 /usr/libexec/at-spi-bus-launcher --launch-immediately
+aashish     2409  0.0  0.0   9620  5096 ?        S    Apr10   0:04 /usr/bin/dbus-daemon --config-file=/usr/share/defaults/at-spi2/accessibility.conf --nofork --print-address 11 --address=unix:path=/run/user/1000/at-spi/bus
+aashish     2411  5.8  3.9 5163684 315012 ?      Rsl  Apr10  18:52 /usr/bin/gnome-shell
+aashish     2529  0.0  0.0 236076  7380 ?        Sl   Apr10   0:00 /usr/libexec/at-spi2-registryd --use-gnome-session
+aashish     2544  0.0  0.2 654796 17348 ?        Sl   Apr10   0:00 /usr/libexec/gnome-shell-calendar-server
+aashish     2552  0.0  0.5 1283968 42152 ?       Ssl  Apr10   0:00 /usr/libexec/evolution-source-registry
+aashish     2564  0.0  0.3 2663108 27188 ?       Sl   Apr10   0:00 /usr/bin/gjs -m /usr/share/gnome-shell/org.gnome.Shell.Notifications
+aashish     2572  0.2  0.1 471180 12200 ?        Ssl  Apr10   0:57 /usr/bin/ibus-daemon --panel disable
+aashish     2573  0.0  0.0 392204  6732 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-a11y-settings
+aashish     2578  0.0  0.2 421604 20060 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-color
+aashish     2579  0.0  0.1 440356 11620 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-datetime
+aashish     2582  0.0  0.1 467696  8320 ?        Ssl  Apr10   0:01 /usr/libexec/gsd-housekeeping
+aashish     2583  0.0  0.2 420456 19668 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-keyboard
+aashish     2585  0.0  0.3 602840 25064 ?        Ssl  Apr10   0:01 /usr/libexec/gsd-media-keys
+aashish     2586  0.0  0.3 675476 26892 ?        Ssl  Apr10   0:01 /usr/libexec/gsd-power
+aashish     2588  0.0  0.1 332436 11404 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-print-notifications
+aashish     2589  0.0  0.0 539760  6748 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-rfkill
+aashish     2590  0.0  0.0 318236  6376 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-screensaver-proxy
+aashish     2592  0.0  0.1 552008 11480 ?        Ssl  Apr10   0:03 /usr/libexec/gsd-sharing
+aashish     2595  0.0  0.0 394504  7796 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-smartcard
+aashish     2598  0.0  0.1 402320  9736 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-sound
+aashish     2599  0.0  0.2 495164 20532 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-wacom
+aashish     2614  0.0  0.7 838032 62492 ?        Sl   Apr10   0:00 /usr/libexec/evolution-data-server/evolution-alarm-notify
+aashish     2626  0.0  0.2 555364 23184 ?        Sl   Apr10   0:00 /usr/libexec/goa-daemon
+aashish     2639  0.0  0.0 305500  7736 ?        Sl   Apr10   0:00 /usr/libexec/gsd-disk-utility-notify
+aashish     2722  0.0  0.2 1374576 23884 ?       Ssl  Apr10   0:00 /usr/libexec/evolution-calendar-factory
+aashish     2759  0.0  0.1 397800  9040 ?        Sl   Apr10   0:00 /usr/libexec/goa-identity-service
+aashish     2779  0.0  0.0 319148  7264 ?        Sl   Apr10   0:00 /usr/libexec/ibus-dconf
+aashish     2780  0.0  0.3 430208 29824 ?        Sl   Apr10   0:14 /usr/libexec/ibus-extension-gtk3
+aashish     2782  0.0  0.1 398004 10736 ?        Ssl  Apr10   0:02 /usr/libexec/gvfs-udisks2-volume-monitor
+aashish     2788  0.0  0.0 319100  7320 ?        Sl   Apr10   0:00 /usr/libexec/ibus-portal
+aashish     2806  0.0  0.1 424916 14964 ?        Sl   Apr10   0:00 /usr/libexec/gsd-printer
+aashish     2813  0.0  0.3 834140 29092 ?        Ssl  Apr10   0:00 /usr/libexec/evolution-addressbook-factory
+aashish     2834  0.0  0.0 318468  6668 ?        Ssl  Apr10   0:00 /usr/libexec/gvfs-mtp-volume-monitor
+aashish     2847  0.0  0.0 318448  6728 ?        Ssl  Apr10   0:00 /usr/libexec/gvfs-goa-volume-monitor
+aashish     2853  0.0  0.0 398056  7836 ?        Ssl  Apr10   0:01 /usr/libexec/gvfs-afc-volume-monitor
+aashish     2862  0.0  0.0 319436  7060 ?        Ssl  Apr10   0:00 /usr/libexec/gvfs-gphoto2-volume-monitor
+aashish     2939  0.0  0.0 245444  7584 ?        Sl   Apr10   0:18 /usr/libexec/ibus-engine-simple
+aashish     2956  0.0  0.0 230352  6192 ?        Ssl  Apr10   0:00 /usr/libexec/dconf-service
+aashish     2983  0.0  0.1 618116  9064 ?        Sl   Apr10   0:00 /usr/libexec/gvfsd-trash --spawner :1.20 /org/gtk/gvfs/exec_spaw/0
+aashish     3008  0.0  0.1 710328 14116 ?        Ssl  Apr10   0:01 /usr/libexec/xdg-desktop-portal
+aashish     3029  0.0  0.4 959328 32560 ?        SNsl Apr10   0:06 /usr/libexec/tracker-miner-fs-3
+aashish     3030  0.1  2.8 1927188 226692 ?      Ssl  Apr10   0:27 /usr/libexec/xdg-desktop-portal-gnome
+aashish     3050  0.0  0.3 2663164 26824 ?       Sl   Apr10   0:00 /usr/bin/gjs -m /usr/share/gnome-shell/org.gnome.ScreenSaver
+aashish     3127  0.0  0.3 429456 29260 ?        Ssl  Apr10   0:00 /usr/libexec/xdg-desktop-portal-gtk
+aashish     3133  0.0  0.0 245116  6700 ?        Ssl  Apr10   0:00 /usr/libexec/gvfsd-metadata
+aashish     3164  3.4  5.0 51322608 402600 ?     SLl  Apr10  11:15 /opt/google/chrome/chrome
+aashish     3170  0.0  0.0  17104  1896 ?        S    Apr10   0:00 cat
+aashish     3171  0.0  0.0  17104  1900 ?        S    Apr10   0:00 cat
+aashish     3176  0.0  0.0 50353848 4252 ?       Sl   Apr10   0:00 /opt/google/chrome/chrome_crashpad_handler --monitor-self --monitor-self-annotation=ptype=crashpad-handler --database=/home/aashish/.config/google-chrome/Crash Reports --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=lsb-release=Ubuntu 24.04.4 LTS --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=146.0.7680.153 --initial-client-fd=5 --shared-client-connection
+aashish     3178  0.0  0.0 50345636 3368 ?       Sl   Apr10   0:00 /opt/google/chrome/chrome_crashpad_handler --no-periodic-tasks --monitor-self-annotation=ptype=crashpad-handler --database=/home/aashish/.config/google-chrome/Crash Reports --url=https://clients2.google.com/cr/report --annotation=channel= --annotation=lsb-release=Ubuntu 24.04.4 LTS --annotation=plat=Linux --annotation=prod=Chrome_Linux --annotation=ver=146.0.7680.153 --initial-client-fd=4 --shared-client-connection
+aashish     3184  0.0  0.7 50750132 62308 ?      S    Apr10   0:00 /opt/google/chrome/chrome --type=zygote --no-zygote-sandbox --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable
+aashish     3185  0.0  0.7 50750124 62224 ?      S    Apr10   0:00 /opt/google/chrome/chrome --type=zygote --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable
+aashish     3187  0.0  0.2 50750148 18692 ?      S    Apr10   0:00 /opt/google/chrome/chrome --type=zygote --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable
+aashish     3225  5.7  2.5 51324156 208004 ?     Sl   Apr10  18:26 /opt/google/chrome/chrome --type=gpu-process --ozone-platform=wayland --render-node-override=/dev/dri/renderD129 --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --gpu-preferences=UAAAAAAAAAAgAQAEAAAAAAAAAAAAAGAAAQAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --shared-files --metrics-shmem-handle=4,i,6669966400239702239,9498530777164496755,262144 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190708988185955192
+aashish     3231  1.5  1.6 50757712 132076 ?     Sl   Apr10   4:58 /opt/google/chrome/chrome --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --render-node-override=/dev/dri/renderD129 --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,8021909549211048323,15747691472563304282,524288 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190708989122997041
+aashish     3240  0.0  0.7 50817916 60972 ?      Sl   Apr10   0:11 /opt/google/chrome/chrome --type=utility --utility-sub-type=storage.mojom.StorageService --lang=en-US --service-sandbox-type=utility --render-node-override=/dev/dri/renderD129 --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,7672881356975169962,12907388350936194609,524288 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190708990060038890
+aashish     3340  1.0  4.0 1459817928 320476 ?   Sl   Apr10   3:28 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=7 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=51245156 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,385620965040337547,12022731024873817834,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190708992871164437
+aashish     3389  0.0  2.2 1459752528 182552 ?   Sl   Apr10   0:05 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=15 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=53920516 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,9556842851125983680,9951504079325827809,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709000367499229
+aashish     3437  1.9  3.9 1459810368 318220 ?   Sl   Apr10   6:26 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=17 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=61281082 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,15868886137946443901,6922427046523132494,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709002241582927
+aashish     3494  0.7  3.4 1459793140 279688 ?   Sl   Apr10   2:16 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=19 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=74414976 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,10941950511543049775,17139778506581469591,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709004115666625
+aashish     3543  0.0  0.4 581004 36376 ?        Sl   Apr10   0:01 /usr/bin/update-notifier
+aashish     3548  0.0  1.8 1459741484 146644 ?   Sl   Apr10   0:15 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=13 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=100006336 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,13663903467221727058,9541556648503927564,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190708998493415531
+aashish     3710  0.5  2.1 2007924 173892 ?      Sl   Apr10   1:50 /usr/bin/nautilus --gapplication-service
+aashish     3736  0.0  0.1 399208 10620 ?        Sl   Apr10   0:01 /usr/libexec/gvfsd-recent --spawner :1.20 /org/gtk/gvfs/exec_spaw/1
+aashish     4023  0.0  0.1  47748  8296 ?        Ss   Apr10   0:00 /snap/snapd-desktop-integration/361/usr/bin/snapd-desktop-integration
+root        4235  0.0  0.0      0     0 ?        S    Apr10   0:00 [psimon]
+aashish     4336  0.0  0.2 448000 20076 ?        Sl   Apr10   0:00 /snap/snapd-desktop-integration/361/usr/bin/snapd-desktop-integration
+aashish     4408  0.2  0.9 754320 78012 ?        Ssl  Apr10   0:55 /usr/libexec/gnome-terminal-server
+aashish     4415  0.0  0.0  21276  6160 pts/0    Ss+  Apr10   0:00 zsh
+aashish     4448  1.1  4.0 1459818092 320428 ?   Sl   Apr10   3:30 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=22 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=431862679 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,5056652451387998875,3373252239366579119,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709006926792172
+root        4693  0.0  0.5 491196 42920 ?        Ssl  Apr10   0:03 /usr/libexec/fwupd/fwupd
+aashish     4710  0.1  2.7 1460016652 220032 ?   SLl  Apr10   0:23 /snap/obsidian/62/obsidian --no-sandbox
+aashish     4767  0.0  0.6 33817684 52832 ?      S    Apr10   0:00 /snap/obsidian/62/obsidian --type=zygote --no-zygote-sandbox --no-sandbox
+aashish     4768  0.0  0.6 50594888 52380 ?      S    Apr10   0:00 /snap/obsidian/62/obsidian --type=zygote --no-sandbox
+aashish     4829  0.6  1.8 34231540 151764 ?     Sl   Apr10   1:55 /snap/obsidian/62/obsidian --type=zygote --no-zygote-sandbox --no-sandbox
+aashish     4843  0.0  0.9 33875532 77160 ?      Sl   Apr10   0:01 /proc/self/exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --render-node-override=/dev/dri/renderD129 --enable-crash-reporter=2526b994-7027-4371-b12c-8cf5012facd8,no_channel --user-data-dir=/home/aashish/snap/obsidian/62/.config/obsidian --standard-schemes=app --secure-schemes=app --fetch-schemes=app --streaming-schemes=app --code-cache-schemes=app --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,11275529743100980131,502535307867026908,262144 --enable-features=PdfUseShowSaveFilePicker,SharedArrayBuffer --disable-features=LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708989122997041 --log-level=3
+aashish     4894  0.4  3.0 1463082708 246264 ?   Sl   Apr10   1:25 /proc/self/exe --type=renderer --enable-crash-reporter=2526b994-7027-4371-b12c-8cf5012facd8,no_channel --user-data-dir=/home/aashish/snap/obsidian/62/.config/obsidian --standard-schemes=app --secure-schemes=app --fetch-schemes=app --streaming-schemes=app --code-cache-schemes=app --app-path=/snap/obsidian/62/resources/app.asar --no-sandbox --no-zygote --node-integration-in-worker --no-sandbox --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=4 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=1174594437 --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,11275529743100980131,502535307867026908,262144 --enable-features=PdfUseShowSaveFilePicker,SharedArrayBuffer --disable-features=LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708990060038890 --log-level=3
+aashish     5135  0.6  3.4 1459817300 275860 ?   Sl   Apr10   2:02 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=18 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=1190013991 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,13960822134167805173,9962310033573709409,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709003178624776
+aashish     5356  0.0  0.1 470876  8572 ?        Sl   Apr10   0:00 /usr/libexec/gvfsd-network --spawner :1.20 /org/gtk/gvfs/exec_spaw/2
+aashish     5365  0.0  0.1 399224  8748 ?        Sl   Apr10   0:00 /usr/libexec/gvfsd-dnssd --spawner :1.20 /org/gtk/gvfs/exec_spaw/3
+aashish     5841 36.1 22.5 1459825368 1802144 ?  Rl   Apr10  96:25 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=16 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=3384155647 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,17543734969755066490,1230409002110264473,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709001304541078
+aashish     6074  0.1  2.4 1461466572 195024 ?   SLsl Apr10   0:25 /snap/code/229/usr/share/code/code --no-sandbox --force-user-env --ozone-platform=x11
+aashish     6076  0.0  0.6 33805580 49880 ?      S    Apr10   0:00 /snap/code/229/usr/share/code/code --type=zygote --no-zygote-sandbox --no-sandbox
+aashish     6077  0.0  0.6 33805596 50764 ?      S    Apr10   0:00 /snap/code/229/usr/share/code/code --type=zygote --no-sandbox
+aashish     6091  0.0  0.0 33576468 3144 ?       Sl   Apr10   0:00 /snap/code/229/usr/share/code/chrome_crashpad_handler --monitor-self-annotation=ptype=crashpad-handler --no-rate-limit --database=/home/aashish/.config/Code/Crashpad --url=appcenter://code?aid=fba07a4d-84bd-4fc8-a125-9640fc8ce171&uid=b4684e0b-2b94-42dd-a5c3-9b4e06b9fb79&iid=b4684e0b-2b94-42dd-a5c3-9b4e06b9fb79&sid=b4684e0b-2b94-42dd-a5c3-9b4e06b9fb79 --annotation=_companyName=Microsoft --annotation=_productName=VSCode --annotation=_version=1.111.0 --annotation=lsb-release=Ubuntu 24.04.4 LTS --annotation=plat=Linux --annotation=prod=Electron --annotation=ver=39.6.0 --initial-client-fd=48 --shared-client-connection
+aashish     6094  0.0  1.2 779824 98340 ?        Sl   Apr10   0:08 /usr/bin/Xwayland :0 -rootless -noreset -accessx -core -auth /run/user/1000/.mutter-Xwaylandauth.T0G9M3 -listenfd 4 -listenfd 5 -displayfd 6 -initfd 7 -byteswappedclients
+aashish     6112  0.0  1.0 803348 83064 ?        Ssl  Apr10   0:00 /usr/libexec/gsd-xsettings
+aashish     6136  0.0  0.3 275832 24396 ?        Sl   Apr10   0:00 /usr/libexec/ibus-x11
+aashish     6142  0.0  1.0 1030468 87136 ?       Sl   Apr10   0:02 /usr/libexec/mutter-x11-frames
+aashish     6188  0.0  0.9 33863948 75216 ?      Sl   Apr10   0:04 /proc/self/exe --type=utility --utility-sub-type=network.mojom.NetworkService --lang=en-US --service-sandbox-type=none --no-sandbox --crashpad-handler-pid=6091 --enable-crash-reporter=7592cce9-6939-4d01-a5d7-68d3fbbfca44,no_channel --user-data-dir=/home/aashish/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,6617265363559487670,5095979589579869854,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708989122997041
+aashish     6244  0.5  4.5 1461348428 361460 ?   Sl   Apr10   1:31 /snap/code/229/usr/share/code/code --type=zygote --no-sandbox
+aashish     6280  0.0  1.2 50708480 98712 ?      Sl   Apr10   0:13 /proc/self/exe --type=gpu-process --disable-gpu-sandbox --no-sandbox --ozone-platform=x11 --crashpad-handler-pid=6091 --enable-crash-reporter=7592cce9-6939-4d01-a5d7-68d3fbbfca44,no_channel --user-data-dir=/home/aashish/.config/Code --gpu-preferences=UAAAAAAAAAAgAAAEAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAYAAAAAAAAABgAAAAAAAAAAQAAAAAAAAAIAAAAAAAAAAgAAAAAAAAA --use-gl=angle --use-angle=swiftshader-webgl --shared-files --field-trial-handle=3,i,6617265363559487670,5095979589579869854,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708993808206286
+aashish     6305  0.0  1.5 1461316216 121004 ?   Sl   Apr10   0:14 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --no-sandbox --js-flags=--nodecommit_pooled_pages --crashpad-handler-pid=6091 --enable-crash-reporter=7592cce9-6939-4d01-a5d7-68d3fbbfca44,no_channel --user-data-dir=/home/aashish/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,6617265363559487670,5095979589579869854,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708994745248135
+aashish     6306  0.1  1.3 1461333200 109796 ?   Sl   Apr10   0:16 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --no-sandbox --js-flags=--nodecommit_pooled_pages --crashpad-handler-pid=6091 --enable-crash-reporter=7592cce9-6939-4d01-a5d7-68d3fbbfca44,no_channel --user-data-dir=/home/aashish/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,6617265363559487670,5095979589579869854,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708995682289984
+aashish     6331  0.2  2.2 1478094392 176888 ?   Sl   Apr10   0:45 /proc/self/exe --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --no-sandbox --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --js-flags=--nodecommit_pooled_pages --crashpad-handler-pid=6091 --enable-crash-reporter=7592cce9-6939-4d01-a5d7-68d3fbbfca44,no_channel --user-data-dir=/home/aashish/.config/Code --standard-schemes=vscode-webview,vscode-file --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files=v8_context_snapshot_data:100 --field-trial-handle=3,i,6617265363559487670,5095979589579869854,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,LocalNetworkAccessChecks,ScreenAIOCREnabled,SpareRendererForSitePerProcess,TraceSiteInstanceGetProcessCreation --variations-seed-version --trace-process-track-uuid=3190708996619331833
+aashish     6383  0.0  1.1 1459515644 94768 ?    Sl   Apr10   0:09 /snap/code/229/usr/share/code/code /snap/code/229/usr/share/code/resources/app/extensions/markdown-language-features/dist/serverWorkerMain --node-ipc --clientProcessId=6331
+aashish     6407  0.0  1.1 1476292860 93444 ?    Sl   Apr10   0:02 /snap/code/229/usr/share/code/code /home/aashish/.vscode/extensions/dbaeumer.vscode-eslint-3.0.24/server/out/eslintServer.js --node-ipc --clientProcessId=6331
+aashish     7101  0.1  2.5 1459778404 206036 ?   Sl   Apr10   0:14 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=25 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=6170773079 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,16598742606548000545,18386398302173604966,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709009737917719
+aashish     7146  0.0  1.0 50814832 85772 ?      Sl   Apr10   0:01 /opt/google/chrome/chrome --type=utility --utility-sub-type=audio.mojom.AudioService --lang=en-US --service-sandbox-type=none --render-node-override=/dev/dri/renderD129 --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,12509994606567956771,17420150414843892160,524288 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709013486085115
+root        7942  0.0  0.0      0     0 ?        S    01:41   0:00 [irq/132-mei_me]
+aashish     8117  0.0  0.8 2953400 64644 ?       Sl   01:41   0:01 gjs /usr/share/gnome-shell/extensions/ding@rastersoft.com/app/ding.js -E -P /usr/share/gnome-shell/extensions/ding@rastersoft.com/app
+aashish     8205  0.0  0.0  21196  6084 pts/1    Ss   01:48   0:00 zsh
+root        8240  0.0  0.0      0     0 ?        I    01:49   0:01 [kworker/2:1-events]
+root        8295  0.0  0.0      0     0 ?        I    01:50   0:01 [kworker/1:1-i915-unordered]
+aashish     8946  1.4  3.7 1459802248 302904 ?   Sl   02:13   0:58 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=35 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=14100281673 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,10979406364542327172,5036566463466226398,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709019108336209
+aashish     8955  0.0  0.9 1459731000 76028 ?    Sl   02:13   0:00 /opt/google/chrome/chrome --type=renderer --crashpad-handler-pid=3176 --enable-crash-reporter=, --change-stack-guard-on-fork=enable --ozone-platform=wayland --lang=en-US --num-raster-threads=2 --enable-main-frame-before-activation --renderer-client-id=36 --time-ticks-at-unix-epoch=-1775838506058757 --launch-time-ticks=14100850725 --shared-files=v8_context_snapshot_data:100 --metrics-shmem-handle=4,i,17281021464935565464,18373602893694150168,2097152 --field-trial-handle=3,i,14505558156012139228,7202116167552051970,262144 --disable-features=EyeDropper --variations-seed-version=20260410-010027.460000-production --pseudonymization-salt-handle=7,i,1456514613244827307,13739214786032936611,4 --trace-process-track-uuid=3190709020045378058
+aashish     8990  0.0  0.0   8444  5908 ?        S    02:15   0:00 /usr/bin/ssh-agent -D -a /run/user/1000/keyring/.ssh
+root        9154  0.1  0.0      0     0 ?        I    02:20   0:06 [kworker/0:1-i915-unordered]
+root        9463  0.0  0.0      0     0 ?        I    02:29   0:00 [kworker/u16:3-kvfree_rcu_reclaim]
+aashish     9754  0.7  2.6 2035416 209456 ?      Sl   02:35   0:19 /usr/bin/gnome-text-editor /home/aashish/AI-Growth-OS/scripts/dump_system.sh
+root        9831  0.0  0.0      0     0 ?        I    02:38   0:00 [kworker/3:1-mm_percpu_wq]
+root        9834  0.0  0.0      0     0 ?        I    02:38   0:00 [kworker/u16:0-flush-8:0]
+root       10519  0.0  0.0      0     0 ?        I    02:56   0:00 [kworker/3:0-kacpi_notify]
+root       10520  0.0  0.0      0     0 ?        I    02:57   0:00 [kworker/1:0-kacpi_notify]
+aashish    10816  0.0  0.0  21196  5944 pts/2    Ss+  03:02   0:00 zsh
+root       10935  0.0  0.0      0     0 ?        I<   03:04   0:01 [kworker/u17:0-i915_flip]
+root       10951  0.0  0.0      0     0 ?        I    03:04   0:00 [kworker/0:0-events]
+root       11097  0.0  0.0      0     0 ?        I    03:06   0:00 [kworker/2:2-events]
+root       11102  0.0  0.0      0     0 ?        I    03:06   0:00 [kworker/3:2-events]
+root       11361  0.0  0.0      0     0 ?        I    03:10   0:00 [kworker/1:2-events]
+root       11416  0.0  0.0      0     0 ?        I<   03:10   0:00 [kworker/u17:2-i915_flip]
+root       11518  0.0  0.0      0     0 ?        I    03:11   0:00 [kworker/0:2-events]
+root       11560  0.0  0.0      0     0 ?        I    03:11   0:00 [kworker/u16:2-events_unbound]
+root       11573  0.0  0.0      0     0 ?        I    03:11   0:00 [kworker/2:0-kacpi_notify]
+root       11579  0.0  0.0      0     0 ?        I    03:12   0:00 [kworker/1:3-cgroup_free]
+root       11582  0.0  0.0      0     0 ?        I    03:13   0:00 [kworker/2:3-events]
+root       11716  0.0  0.0      0     0 ?        I    03:14   0:00 [kworker/0:4-rtl8821ae_pci]
+aashish    11717  0.0  0.0  21196  6100 pts/3    Ss+  03:14   0:00 zsh
+root       11915  0.0  0.0      0     0 ?        I    03:18   0:00 [kworker/3:3-i915-unordered]
+root       11916  0.0  0.0      0     0 ?        I    03:18   0:00 [kworker/3:4]
+root       11917  0.0  0.0      0     0 ?        I    03:18   0:00 [kworker/1:4]
+root       11919  0.0  0.0      0     0 ?        I    03:18   0:00 [kworker/2:4-kacpi_notify]
+root       11921  0.0  0.0      0     0 ?        I    03:19   0:00 [kworker/u16:1-events_unbound]
+root       12074  0.0  0.0  30712  6084 ?        S    03:21   0:00 (udev-worker)
+root       12126  0.0  0.0      0     0 ?        I    03:21   0:00 [kworker/2:5]
+aashish    12129  0.0  0.0  18616  3660 pts/1    S+   03:21   0:00 /bin/bash ./scripts/dump_system.sh
+aashish    12137  200  0.0  22424  4796 pts/1    R+   03:21   0:00 ps aux
