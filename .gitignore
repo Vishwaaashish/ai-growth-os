@@ -18,3 +18,10 @@ venv/
 backup/
 
 node_modules/
+
+
+# Database (if local)
+*.db
+
+# Redis dump (if exists)
+dump.rdb

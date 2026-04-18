@@ -26,10 +26,13 @@ from app.planner.goal_planner import GoalPlanner
 from app.planner.plan_executor import PlanExecutor
 from app.planner.goal_store import GoalStore
 
+from app.api.routes.metrics import router as metrics_router
+from app.api.routes.job import router as job_router
+
 app = FastAPI()
 
-from app.api.routes.job import router as job_router
 app.include_router(job_router)
+app.include_router(metrics_router)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -212,4 +215,8 @@ def clear_goal():
 # =========================
 @app.get("/")
 def health():
+    return {"status": "ok"}
+
+@app.get("/health")
+def health_check():
     return {"status": "ok"}

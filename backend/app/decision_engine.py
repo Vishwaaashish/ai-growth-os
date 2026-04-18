@@ -1,6 +1,7 @@
 import logging
 from app.core.infra_manager import InfraManager
 from app.core.learning.policies.scoring import compute_policy_score
+from app.core.learning.policies.policy_engine import get_fallback_policy
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -44,12 +45,19 @@ def select_best_policy(policies):
     Weighted scoring selection
     """
     if not policies:
-        return None, []
+
+        fallback = get_fallback_policy()
+        return fallback, [fallback]
 
     scored = []
 
     for p in policies:
-        score = compute_policy_score(p)
+        metrics = p.get("metrics", {})  # SAFE EXTRACTION
+
+        logger.debug(f"POLICY INPUT: {p}")
+        logger.debug(f"EXTRACTED METRICS: {p.get('metrics')}")
+
+        score = compute_policy_score(p, metrics)
 
         # attach score
         p["score"] = round(score, 4)
@@ -70,7 +78,8 @@ def apply_priority_arbitration(policies):
     Priority override layer
     """
     if not policies:
-        return None
+
+        return get_fallback_policy()
 
     high_priority = [
         p for p in policies if p.get("priority", 0) >= 9
@@ -83,7 +92,7 @@ def apply_priority_arbitration(policies):
             reverse=True
         )[0]
 
-    return None
+    return get_fallback_policy()
 
 
 # 🔷 SINGLE INSTANCE (SYSTEM WIDE)
@@ -102,3 +111,34 @@ async def restart_failed_jobs(context):
 
 async def optimize_performance(context):
     return decision_engine.optimize_latency()
+
+
+if __name__ == "__main__":
+    test_policies = [
+        {
+            "id": "policy_high_success",
+            "priority": 5,
+            "metrics": {
+                "success_rate": 0.9,
+                "failure_count": 1,
+                "total_runs": 10,
+                "avg_latency": 100
+            }
+        },
+        {
+            "id": "policy_high_failure",
+            "priority": 5,
+            "metrics": {
+                "success_rate": 0.3,
+                "failure_count": 7,
+                "total_runs": 10,
+                "avg_latency": 500
+            }
+        }
+    ]
+
+    best, ranked = select_best_policy(test_policies)
+
+    print("\n=== FINAL OUTPUT ===")
+    print("BEST POLICY:", best)
+    print("RANKED:", ranked)

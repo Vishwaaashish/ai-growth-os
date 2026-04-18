@@ -1,13 +1,19 @@
+import time
 from sqlalchemy import text
-
+from app.core.security.metrics_guard import validate_metrics
 
 def update_policy_metrics(db, policy_id: int, success: bool, latency: int):
     try:
+        if not validate_metrics(success, latency):
+            return
+
         # 🔷 STEP 1: check if row exists
         existing = db.execute(
             text("SELECT * FROM policy_metrics WHERE policy_id = :pid"),
             {"pid": policy_id}
         ).fetchone()
+
+        policy_cache["last_used_timestamp"] = time.time()
 
         if existing:
             # 🔷 UPDATE

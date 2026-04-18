@@ -1,0 +1,206 @@
+.
+├── archive
+│   ├── ai-service-backup
+│   │   ├── app
+│   │   ├── database.py
+│   │   ├── deps.py
+│   │   ├── init_db.py
+│   │   ├── main.py
+│   │   ├── models.py
+│   │   ├── redis_client.py
+│   │   ├── requirements.txt
+│   │   ├── test_db.py
+│   │   └── worker.py
+│   ├── app
+│   │   ├── api
+│   │   ├── core
+│   │   ├── database
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── schemas
+│   │   └── services
+│   ├── deps.py
+│   ├── init_db.py
+│   ├── redis_client.py
+│   ├── requirements.txt
+│   ├── test_db.py
+│   └── worker.py
+├── backend
+│   ├── app
+│   │   ├── adapters
+│   │   ├── agents
+│   │   ├── api
+│   │   ├── contracts.py
+│   │   ├── core
+│   │   ├── db
+│   │   ├── decision_engine.py
+│   │   ├── __init__.py
+│   │   ├── main.py
+│   │   ├── models
+│   │   ├── orchestrator
+│   │   ├── planner
+│   │   ├── __pycache__
+│   │   ├── queue
+│   │   ├── routing
+│   │   ├── schemas
+│   │   ├── services
+│   │   └── worker
+│   ├── PROJECT_CONTEXT.md
+│   ├── requirements.txt
+│   ├── test.db
+│   ├── venv
+│   │   ├── bin
+│   │   ├── include
+│   │   ├── lib
+│   │   ├── lib64 -> lib
+│   │   └── pyvenv.cfg
+│   ├── worker.log
+│   └── worker.py
+├── backup_20260411_032015
+│   ├── backend
+│   │   ├── app
+│   │   ├── PROJECT_CONTEXT.md
+│   │   ├── requirements.txt
+│   │   ├── test.db
+│   │   ├── venv
+│   │   └── worker.py
+│   ├── docker-compose.yml
+│   ├── docs
+│   │   ├── api
+│   │   ├── architecture
+│   │   ├── database
+│   │   ├── governance
+│   │   ├── MASTER_PHASE_STATE.md
+│   │   ├── process
+│   │   └── workflows
+│   └── scripts
+│       ├── backup.sh
+│       ├── dump_system.sh
+│       ├── run.sh
+│       ├── setup.sh
+│       └── venv
+├── backup_phase3.sql
+├── backups
+│   ├── code
+│   ├── db
+│   └── db-2026-03-16.sql
+├── backup.sql
+├── CHANGELOG.md
+├── directory_tree_main.txt
+├── docker-compose.backup.yml
+├── docker-compose.old
+├── docker-compose.yml
+├── docker-compose.yml.backup
+├── docker-compose.yml.save
+├── docker-compose.yml.save.1
+├── docs
+│   ├── api
+│   │   └── endpoints.md
+│   ├── architecture
+│   │   └── system_design.md
+│   ├── database
+│   │   └── schema.md
+│   ├── governance
+│   │   └── execution_rules.md
+│   ├── MASTER_PHASE_STATE.md
+│   ├── POST_MVP_BACKLOG.md
+│   ├── process
+│   │   ├── agile.md
+│   │   ├── client_lifecycle.md
+│   │   ├── sdlc.md
+│   │   └── sop.md
+│   └── workflows
+│       └── n8n_flows.md
+├── frontend
+├── HANDOFF_PROMPT.md
+├── infra
+│   ├── docker-compose.yml
+│   ├── grafana
+│   ├── nginx
+│   ├── prometheus
+│   └── prometheus.yml
+├── learning.log
+├── monitoring
+│   ├── alertmanager
+│   │   └── alertmanager.yml
+│   ├── alerts.yml
+│   ├── grafana
+│   │   ├── dashboards
+│   │   └── provisioning
+│   ├── prometheus
+│   │   ├── alert_rules.yml
+│   │   └── prometheus.yml
+│   └── prometheus.yml
+├── n8n
+│   └── workflows
+├── nginx
+│   └── default.conf
+├── odoo.yml
+├── phase_state6.mf
+├── PROJECT_CONTEXT.md
+├── prometheus.yml
+├── README.md
+├── scripts
+│   ├── backup.sh
+│   ├── bootstrap.sh
+│   ├── dump_system.sh
+│   ├── run.sh
+│   ├── setup.sh
+│   └── venv
+│       ├── bin
+│       ├── include
+│       ├── lib
+│       ├── lib64 -> lib
+│       └── pyvenv.cfg
+├── server.log
+├── stacks
+│   ├── analytics.yml
+│   ├── automation.yml
+│   ├── gateway.yml
+│   └── monitoring.yml
+├── state
+│   └── phase_state_v7.json
+├── system_dump_20260411_023039
+│   ├── disk_usage.txt
+│   ├── git_log.txt
+│   ├── git_status.txt
+│   ├── memory.txt
+│   ├── processes.txt
+│   ├── project_structure.txt
+│   └── system_info.txt
+├── system_dump_20260411_032154
+│   ├── git_log.txt
+│   ├── git_status.txt
+│   ├── processes.txt
+│   ├── project_structure.txt
+│   ├── python_path.txt
+│   └── system_info.txt
+├── venv
+│   ├── bin
+│   │   ├── activate
+│   │   ├── activate.csh
+│   │   ├── activate.fish
+│   │   ├── Activate.ps1
+│   │   ├── dotenv
+│   │   ├── fastapi
+│   │   ├── normalizer
+│   │   ├── pip
+│   │   ├── pip3
+│   │   ├── pip3.12
+│   │   ├── python -> python3
+│   │   ├── python3 -> /usr/bin/python3
+│   │   ├── python3.12 -> python3
+│   │   ├── rq
+│   │   ├── rqinfo
+│   │   ├── rqworker
+│   │   └── uvicorn
+│   ├── include
+│   │   ├── python3.12
+│   │   └── site
+│   ├── lib
+│   │   └── python3.12
+│   ├── lib64 -> lib
+│   └── pyvenv.cfg
+└── worker.log
+
+86 directories, 118 files
