@@ -1,8 +1,6 @@
-import logging
+from app.core.logger import logger
 from sqlalchemy import text
 from app.db.session import SessionLocal
-
-logger = logging.getLogger(__name__)
 
 
 def extract_patterns():
@@ -40,7 +38,11 @@ def extract_patterns():
         return patterns
 
     except Exception as e:
-        logger.error(f"Pattern Extraction Error: {str(e)}")
+        logger.error(
+            "pattern_extraction_error",
+            extra={"error": str(e)},
+            exc_info=True
+        )
         return []
 
     finally:

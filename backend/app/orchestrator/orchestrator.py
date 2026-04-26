@@ -2,7 +2,7 @@ from app.agents.scaler_agent import ScalerAgent
 from app.agents.healer_agent import HealerAgent
 from app.agents.optimizer_agent import OptimizerAgent
 from app.adapters.decision_adapter import DecisionAdapter
-from app.core.logger import log_event
+from app.core.logger import logger
 
 
 class Orchestrator:
@@ -39,8 +39,8 @@ class Orchestrator:
                 result = await agent.execute(context)
                 results.append({"step": step, "result": result})
 
-        log_event(f"PLAN: {plan}")
-        log_event(f"RESULT: {results}")
+        logger.info(f"PLAN: {plan}")
+        logger.info(f"RESULT: {results}")
 
         return {
             "plan": plan,

@@ -1,16 +1,14 @@
+from app.core.config.config import settings
 import redis
 from rq import Queue
 
-# ---------------------------
-# REDIS CONNECTION (FIXED)
-# ---------------------------
-
 redis_conn = redis.Redis(
-    host="localhost",
-    port=6379,
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
     db=0,
-    decode_responses=False,  # ✅ CRITICAL (DO NOT CHANGE)
+    decode_responses=False,  # ✅ DO NOT CHANGE
 )
+
 
 # ---------------------------
 # MAIN QUEUES

@@ -1,14 +1,13 @@
 import json
 import time
-import random
 
+from sqlalchemy import text
 from app.db.session import SessionLocal
 from app.models.job import Job
 
-from app.core.observability.metrics import increment, record_timing
+from app.core.logger import logger
+from app.core.observability.metrics import increment
 from app.core.observability.trace import start_trace, end_trace
-from app.core.observability.logger import get_logger
-from app.core.observability.failures import log_failure
 
 from app.core.learning.learning_orchestrator import run_learning_cycle
 from app.core.learning.policies.policy_engine import select_policy
@@ -16,203 +15,287 @@ from app.core.learning.feedback import update_policy_metrics
 from app.core.learning.agents.agent_metrics import update_agent_score
 from app.core.intelligence.memory.learning_memory import store_learning_event
 
+from app.core.creative.orchestrator.generation_orchestrator import generate_creatives
+from app.core.creative.selector import select_top_creatives
+
+from app.core.integrations.meta.sync_service import sync_meta_data
 from app.core.security.execution_guard import validate_job_execution
-from app.core.security.circuit_breaker import is_circuit_open, record_failure
+from app.core.security.circuit_breaker import record_failure
 
-logger = get_logger(__name__)
+from app.core.intelligence.context.context_builder import build_context
+from app.core.intelligence.goals.goal_engine import get_active_goals
+from app.core.intelligence.planning.planner import build_plan
+from app.core.intelligence.reasoning.reasoning_engine import reason
+from app.core.intelligence.strategy.strategy_selector import select_final_strategy
+
+from app.core.integration.meta_actions import pause_campaign, increase_budget
+from app.core.intelligence.feedback.feedback_optimizer import optimize_from_feedback
+
+from app.core.testing.mock_metrics_engine import update_mock_metrics
+from app.core.testing.fatigue_engine import detect_fatigue
+from app.core.testing.experiment_manager import start_experiment
+from app.core.testing.winner_selector import select_winner
 
 
-def execute_job(job_id: int):
+# =========================
+# HELPERS
+# =========================
+def parse_payload(payload):
+    if payload is None:
+        return {}
+    if isinstance(payload, dict):
+        return payload
+    if isinstance(payload, str):
+        try:
+            return json.loads(payload)
+        except:
+            return {}
+    return {}
+
+
+# =========================
+# AI JOB EXECUTION
+# =========================
+def execute_ai_job(job, payload):
+    mode = payload.get("mode", "default")
+
+    logger.info("ai_job_execution_started", extra={
+        "job_id": str(job.id),
+        "mode": mode
+    })
+
+    if mode == "explore":
+        time.sleep(1.5)
+    elif mode == "exploit":
+        time.sleep(0.5)
+    else:
+        time.sleep(1)
+
+    result = {"status": "success", "mode": mode}
+
+    logger.info("ai_job_execution_completed", extra={
+        "job_id": str(job.id)
+    })
+
+    return result
+
+
+# =========================
+# EXECUTOR
+# =========================
+def execute_job(job_id):
     db = SessionLocal()
     trace = start_trace()
-    error_msg = None
+    start_time = time.time()
 
-    increment("jobs_total")
-    print("DEBUG: jobs_total incremented")
+    job = None
+    policy_id = None
+    agent_name = "fallback"
 
     try:
-        # =========================
         # STEP 1: FETCH JOB
-        # =========================
         job = db.query(Job).filter(Job.id == job_id).first()
-
         if not job:
-            logger.error({"type": "job_missing", "job_id": job_id})
             return {"error": "Job not found"}
 
+        increment("jobs_total", 1)
         validate_job_execution(job)
 
-        payload = json.loads(job.payload or "{}")
+        payload = parse_payload(job.payload)
 
         # =========================
-        # STEP 2: CIRCUIT BREAKER
+        # META SYNC
         # =========================
-        if is_circuit_open(job.type):
-            logger.warning({
-                "type": "circuit_open",
-                "job_type": job.type,
-                "job_id": job_id
-            })
-            return {"status": "circuit_open", "job_id": job_id}
+        if payload.get("enable_meta_sync", False):
+            try:
+                sync_meta_data(
+                    ad_account_id=payload.get("ad_account_id", "test_account")
+                )
+            except Exception as e:
+                logger.warning("meta_sync_failed", extra={"error": str(e)})
 
         # =========================
-        # STEP 3: POLICY SELECTION
+        # POLICY
         # =========================
-        policy, ranked = select_policy(job.type, payload)
-
-        if not policy or not isinstance(policy, dict):
-            raise Exception(f"Invalid policy: {policy}")
+        policy, _ = select_policy(job.type, payload)
+        if not policy:
+            raise Exception("No policy found")
 
         policy_id = policy.get("id")
-        if not isinstance(policy_id, int):
-            policy_id = None
-
         agent_name = policy.get("agent_name", "fallback")
 
         job.status = "running"
         job.policy_id = policy_id
         db.commit()
 
-        start_time = time.time()
+        # =========================
+        # INTELLIGENCE
+        # =========================
+        context = build_context(job, payload, db)
 
-        logger.info({
-            "type": "job_start",
-            "job_id": job_id,
-            "policy_id": policy_id
-        })
+        memory = {}
+        metrics = policy.get("metrics", {}) or {}
+        memory["avg_latency"] = metrics.get("avg_latency", 0)
+        memory["success_rate"] = metrics.get("success_rate", 0)
+
+        goals = get_active_goals()
+        plan = build_plan(goals, context)
+
+        decisions = reason(plan, memory)
+        strategy = select_final_strategy(decisions)
+
+        logger.info("strategy_selected", extra={"strategy": strategy})
 
         # =========================
-        # STEP 4: EXECUTION ROUTING
+        # CREATIVE SELECTION (FIXED)
         # =========================
-        if job.type in ["test", "test_job"]:
-            result = {
-                "status": "success",
-                "message": f"Executed job type: {job.type}"
-            }
+        selected_creatives = select_top_creatives(limit=5)
+
+        if selected_creatives:
+            logger.info("reusing_top_creatives", extra={
+                "count": len(selected_creatives)
+            })
+
+            for cid in selected_creatives:
+                db.execute(text("""
+                    INSERT INTO creative_metrics (
+                        creative_id, ctr, cpa, roas, frequency, updated_at
+                    )
+                    SELECT creative_id, ctr, cpa, roas, frequency, NOW()
+                    FROM creative_metrics
+                    WHERE creative_id = :cid
+                    ORDER BY updated_at DESC
+                    LIMIT 1
+                """), {"cid": cid})
+
+            db.commit()
 
         else:
-            raise Exception(f"Unknown job type: {job.type}")
+            logger.info("no_top_creatives_found_generating")
+
+            generate_creatives(
+                product_id=payload.get("product_id", "default"),
+                ad_account_id=payload.get("ad_account_id", "test_account"),
+                auto_deploy=payload.get("auto_deploy", False)
+            )
+
+        # =========================
+        # EXECUTION
+        # =========================
+        job_type = (job.type or "").lower()
+
+        try:
+            if job_type == "ai":
+                result = execute_ai_job(job, {**payload, "mode": strategy})
+            else:
+                result = {"status": "success"}
+
+            success = result.get("status") == "success"
+
+        except Exception as e:
+            success = False
+            result = {"status": "failed", "error": str(e)}
 
         latency = int((time.time() - start_time) * 1000)
 
         # =========================
-        # STEP 5: SUCCESS HANDLING
+        # PHASE 7 TESTING
+        # =========================
+        update_mock_metrics()
+
+        fatigued = detect_fatigue()
+
+        if fatigued:
+            logger.info("fatigue_triggered", extra={"count": len(fatigued)})
+
+            generate_creatives(
+                product_id=payload.get("product_id", "default"),
+                ad_account_id=payload.get("ad_account_id", "test_account"),
+                auto_deploy=payload.get("auto_deploy", False)
+            )
+
+        winner = select_winner()
+        if winner:
+            logger.info("creative_winner_selected", extra={"creative_id": winner})
+
+        if strategy == "generate_creative":
+            start_experiment(creative_id="latest_batch")
+
+        # =========================
+        # FEEDBACK
+        # =========================
+        optimize_from_feedback(
+            policy_id=policy_id,
+            success=success,
+            latency=latency
+        )
+
+        db.execute(text("""
+            INSERT INTO strategy_memory (
+                policy_id, strategy, success, latency, context
+            )
+            VALUES (
+                :policy_id, :strategy, :success, :latency, :context
+            )
+        """), {
+            "policy_id": policy_id,
+            "strategy": strategy,
+            "success": success,
+            "latency": latency,
+            "context": json.dumps(context)
+        })
+
+        # =========================
+        # POLICY SCORE UPDATE
+        # =========================
+        score_delta = 1.5 if success else -1.0
+        score_delta += 0.5 if latency < 1200 else -0.3
+
+        db.execute(text("""
+            UPDATE policies
+            SET usage_count = COALESCE(usage_count, 0) + 1,
+                last_used = NOW(),
+                score = COALESCE(score, 0) + :score_delta
+            WHERE id = :policy_id
+        """), {
+            "policy_id": policy_id,
+            "score_delta": score_delta
+        })
+
+        # =========================
+        # SAVE RESULT
         # =========================
         job.status = "completed"
         job.result = json.dumps(result)
+        job.error = None
         db.commit()
 
-        # Metrics
-        increment("jobs_success")
-        record_timing("job_execution_time", latency / 1000.0)
-
-        # Policy metrics
-        if policy_id:
-            update_policy_metrics(policy_id=policy_id, success=True, latency=latency)
-            store_learning_event(policy_id, True, latency)
-
-        # Agent score
-        try:
-            update_agent_score(agent_name, True)
-        except Exception as e:
-            logger.error({"type": "agent_score_error", "error": str(e)})
-
-        # Learning trigger
-        if random.random() < 0.3:
-            run_learning_cycle()
-
         # =========================
-        # STEP 6: TRACE LOGGING
+        # LEARNING
         # =========================
-        trace = end_trace(trace)
+        update_policy_metrics(policy_id, success, latency)
+        store_learning_event(policy_id, success, latency)
+        update_agent_score(agent_name, success)
 
-        logger.info({
-            "type": "job_execution",
-            "trace_id": trace.get("trace_id"),
-            "job_id": job_id,
-            "duration": trace.get("duration"),
-            "status": "completed"
-        })
+        run_learning_cycle()
 
-        return {
-            "job_id": job_id,
-            "policy": policy,
-            "latency_ms": latency
-        }
+        end_trace(trace)
+
+        return {"job_id": str(job.id), "status": "completed"}
 
     except Exception as e:
-        error_msg = str(e) if e else "Unknown error"
-
-        increment("jobs_failure")
-        record_timing("job_execution_time", (time.time() - start_time))
-        record_failure(job.type)
-
-        logger.error({
-            "type": "executor_error",
-            "job_id": job_id,
-            "error": error_msg
-        })
-
-        log_failure({
-            "job_id": job_id,
-            "error": error_msg
-        })
-
-        retry_count = getattr(job, "retry_count", 0)
-
-        if retry_count < 2:
-            logger.warning({
-                "type": "job_retry",
-                "job_id": job_id,
-                "retry": retry_count + 1
-            })
-
-            job.retry_count = retry_count + 1
-            job.status = "queued"
-            db.commit()
-
-            return {"status": "retrying"}
-
-        # FINAL FAILURE
         db.rollback()
 
-        job = db.query(Job).filter(Job.id == job_id).first()
+        logger.error("executor_error", extra={"error": str(e)}, exc_info=True)
 
         if job:
             job.status = "failed"
-            job.error = error_msg
-
-            if getattr(job, "retry_count", 0) >= 2:
-                job.status = "dead"
-
+            job.error = str(e)
             db.commit()
 
-        # Policy failure metrics
-        if policy_id:
-            update_policy_metrics(policy_id=policy_id, success=False, latency=0)
-            store_learning_event(policy_id, False, 0)
+        record_failure("global")
 
-        # Agent failure score
-        try:
-            update_agent_score(agent_name, False)
-        except Exception as e:
-            logger.error({"type": "agent_score_error", "error": str(e)})
-
-        # Learning trigger
-        if random.random() < 0.3:
-            run_learning_cycle()
-
-        trace = end_trace(trace)
-
-        logger.info({
-            "type": "job_execution",
-            "trace_id": trace.get("trace_id"),
-            "job_id": job_id,
-            "duration": trace.get("duration"),
-            "status": "failed"
-        })
-
-        return {"error": error_msg}
+        return {"error": str(e)}
 
     finally:
         db.close()

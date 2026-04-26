@@ -1,3 +1,5 @@
+from app.core.logger import logger
+
 agent_scores = {}
 
 def update_agent_score(agent_name, success):
@@ -15,4 +17,7 @@ def update_agent_score(agent_name, success):
     # ✅ HARD CLAMP (STABILITY)
     agent_scores[agent_name] = max(0.1, min(agent_scores[agent_name], 10.0))
 
-    print(f"[AGENT SCORE] {agent_name} → {agent_scores[agent_name]}")
+    logger.info("agent_score", extra={
+        "agent": agent_name,
+        "score": agent_scores[agent_name]
+    })

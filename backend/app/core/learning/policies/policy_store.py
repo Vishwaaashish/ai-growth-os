@@ -1,8 +1,7 @@
 from sqlalchemy import text
 from app.db.session import SessionLocal
 import json
-import logging
-logger = logging.getLogger(__name__)
+from app.core.logger import logger
 
 
 # -------------------------------
@@ -96,7 +95,11 @@ def get_policies(agent_type):
         return policies
 
     except Exception as e:
-        logger.error(f"[POLICY STORE ERROR] {str(e)}", exc_info=True)
+        logger.error(
+            "policy_store_error",
+            extra={"error": str(e)},
+            exc_info=True
+        )
         return []
 
     finally:

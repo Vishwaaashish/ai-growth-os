@@ -1,11 +1,9 @@
 import time
 import math
-import logging
 
+from app.core.logger import logger
 from app.core.config.scoring_config import SCORING_CONFIG
 from app.core.learning.agents.agent_metrics import agent_scores
-
-logger = logging.getLogger(__name__)
 
 
 # -----------------------------
@@ -127,5 +125,5 @@ def compute_policy_score(policy, metrics):
         return score
 
     except Exception as e:
-        print(f"Scoring error: {str(e)}")
+        logger.error("scoring_error", extra={"error": str(e)})
         return 0

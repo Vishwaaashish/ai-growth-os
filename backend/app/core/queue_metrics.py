@@ -4,6 +4,7 @@ import threading
 from rq import Queue
 from app.queue.redis import redis_conn
 from app.core.metrics import queue_size
+from app.core.logger import logger
 
 # ---------------------------
 # QUEUES
@@ -22,17 +23,17 @@ queues = {
 
 
 def update_queue_metrics():
-    print("🚀 Queue metrics thread started...")  # DEBUG
+    logger.info("queue_metrics_started")
 
     while True:
         try:
             for name, q in queues.items():
                 size = len(q)
-                print(f"[Queue] {name}: {size}")  # DEBUG
+                logger.debug("queue_size", extra={"queue": name, "size": size})
                 queue_size.labels(queue_name=name).set(size)
 
         except Exception as e:
-            print(f"[QueueMetricsError] {e}")
+            logger.error("queue_metrics_error", extra={"error": str(e)})
 
         time.sleep(5)
 

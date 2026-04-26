@@ -1,0 +1,55 @@
+{
+  "chat_id": "phase_8_6_production_hardening_chat",
+  "objective": "Stabilize the existing AI Growth OS backend system for production by implementing persistence, container lifecycle management, backup capability, and health monitoring without modifying core execution logic.",
+  "decisions": [
+    "Adopt Docker Compose as the primary lifecycle manager instead of manual scripts",
+    "Enable PostgreSQL persistence using Docker volume ai-growth-os_pgdata",
+    "Enable Redis persistence using AOF (appendonly yes)",
+    "Add restart policy 'unless-stopped' to core services (api, worker, learning, redis, db)",
+    "Introduce healthchecks for Redis and PostgreSQL using redis-cli ping and pg_isready",
+    "Use depends_on with condition service_healthy to control startup order",
+    "Create manual backup system using pg_dump executed inside PostgreSQL container",
+    "Expose /health endpoint in FastAPI for service monitoring",
+    "Remove reliance on manual process control (pkill, port cleanup, run.sh logic)",
+    "Use environment variables for DB and Redis connection instead of hardcoded localhost",
+    "Keep architecture unchanged while adding production hardening layers"
+  ],
+  "built_components": [
+    "Docker Compose infrastructure for API, worker, learning, Redis, PostgreSQL, Prometheus, Grafana, Alertmanager, n8n",
+    "Persistent storage layer for PostgreSQL using Docker volume",
+    "Persistent storage layer for Redis using AOF and Docker volume",
+    "Backup workflow using scripts/backup_db.sh with pg_dump",
+    "Health monitoring endpoint (/health) in FastAPI",
+    "Docker healthcheck system for Redis and PostgreSQL",
+    "Service dependency control using Docker service_healthy condition",
+    "Environment-based configuration for DATABASE_URL and REDIS_HOST"
+  ],
+  "inputs": [
+    "User-provided docker-compose.yml configuration",
+    "User requirement to avoid breaking existing system",
+    "User-reported issues: data loss in PostgreSQL, Redis connection failures, Docker confusion",
+    "User requirement for clean UX and stable container execution",
+    "Existing system with API, worker, learning services already functional"
+  ],
+  "outputs": [
+    "Fully modified and production-hardened docker-compose.yml",
+    "Backup script (scripts/backup_db.sh)",
+    "Health endpoint implementation (/health)",
+    "Validated Docker-based execution flow (API → Redis → Worker → Execution)",
+    "Operational system with persistence, restart safety, and monitoring readiness"
+  ],
+  "dependencies": [
+    "Docker and Docker Compose",
+    "PostgreSQL 15 container",
+    "Redis 7 container",
+    "FastAPI application",
+    "RQ worker system",
+    "Prometheus monitoring",
+    "Grafana dashboard",
+    "Alertmanager",
+    "n8n automation tool",
+    "pg_dump for backup"
+  ],
+  "status": "built",
+  "notes": "System is operational with production hardening applied. Persistence, restart policies, and healthchecks are implemented. Backup exists but is manual. Monitoring stack is present but alerting is not configured. Security for admin endpoints and restore workflow are not implemented."
+}

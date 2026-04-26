@@ -2,9 +2,7 @@ import time
 
 from app.db.session import SessionLocal
 from sqlalchemy import text
-import logging
-
-logger = logging.getLogger(__name__)
+from app.core.logger import logger
 
 def update_policy_metrics(policy_id, success, latency=0):
     db = SessionLocal()
@@ -37,7 +35,12 @@ def update_policy_metrics(policy_id, success, latency=0):
         db.commit()
 
     except Exception as e:
-        logger.error(f"Metrics update failed: {str(e)}")
+
+        logger.error(
+            "metrics_update_failed",
+            extra={"error": str(e)},
+            exc_info=True
+        )
         db.rollback()
 
     finally:

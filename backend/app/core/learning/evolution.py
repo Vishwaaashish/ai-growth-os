@@ -1,8 +1,8 @@
-import logging
+
 from sqlalchemy import text
 from app.db.session import SessionLocal
+from app.core.logger import logger
 
-logger = logging.getLogger(__name__)
 
 
 # 🔷 THRESHOLDS (TUNABLE)
@@ -40,11 +40,14 @@ def evolve_policies():
                     WHERE id = :policy_id
                 """), {"policy_id": policy_id})
 
-                logger.info({
-                    "type": "policy_boost",
-                    "policy_id": policy_id,
-                    "success_rate": success_rate
-                })
+                logger.info(
+                    "policy_boost",
+                    extra={
+                        "policy_id": policy_id,
+                        "success_rate": success_rate
+                    }
+                )
+
 
             # 🔷 CASE 2: LOW PERFORMER → PENALIZE
             elif success_rate <= FAILURE_THRESHOLD:
@@ -54,11 +57,13 @@ def evolve_policies():
                     WHERE id = :policy_id
                 """), {"policy_id": policy_id})
 
-                logger.info({
-                    "type": "policy_penalty",
-                    "policy_id": policy_id,
-                    "success_rate": success_rate
-                })
+                logger.info(
+                    "policy_penalty",
+                    extra={
+                        "policy_id": policy_id,
+                        "success_rate": success_rate
+                    }
+                )
 
             # 🔷 CASE 3: DEAD POLICY → DISABLE
             if failure >= 10:
@@ -68,15 +73,22 @@ def evolve_policies():
                     WHERE id = :policy_id
                 """), {"policy_id": policy_id})
 
-                logger.warning({
-                    "type": "policy_disabled",
-                    "policy_id": policy_id
-                })
+                logger.warning(
+                    "policy_disabled",
+                    extra={
+                        "policy_id": policy_id
+                    }
+                )
 
         db.commit()
 
     except Exception as e:
-        logger.error(f"Evolution error: {str(e)}")
+
+        logger.error(
+            "evolution_error",
+            extra={"error": str(e)},
+            exc_info=True
+        )
         db.rollback()
 
     finally:

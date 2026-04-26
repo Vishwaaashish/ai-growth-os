@@ -1,0 +1,130 @@
+{
+  "chat_id": "AI-Growth-OS-Phase-6.5-Execution-Stabilization",
+  "objective": "Stabilize AI Growth OS execution pipeline including FastAPI job creation, RQ worker execution, policy selection, and learning feedback system with persistent metrics and reliable server-worker lifecycle management.",
+  "decisions": [
+    "Use RQ (Redis Queue) for asynchronous job execution",
+    "Implement job execution via app.worker.executor.execute_job",
+    "Introduce policy selection using select_policy before job creation",
+    "Attach policy_id to job before DB commit",
+    "Use apply_policy to determine execution queue",
+    "Use multiple queues: high, default, low, dead",
+    "Implement retry logic and dead queue fallback in executor",
+    "Introduce policy scoring system using compute_policy_score",
+    "Create policy_metrics table for learning feedback",
+    "Use update_policy_metrics to track success/failure and latency",
+    "Use raw SQL wrapped with SQLAlchemy text()",
+    "Remove uvicorn --reload to avoid multi-process instability",
+    "Use nohup for background execution of server and worker",
+    "Centralize restart using scripts/run.sh",
+    "Use pkill and port cleanup before restart",
+    "Defer systemd implementation but acknowledge requirement for production stability"
+  ],
+  "built_components": [
+    {
+      "name": "Job API Route",
+      "path": "app/api/routes/job.py",
+      "purpose": "Create jobs, assign policy_id, enqueue jobs to RQ"
+    },
+    {
+      "name": "Executor",
+      "path": "app/worker/executor.py",
+      "purpose": "Execute jobs, handle retries, log results, update learning metrics"
+    },
+    {
+      "name": "Policy Engine",
+      "path": "app/core/learning/policies/policy_engine.py",
+      "purpose": "Select best policy based on scoring"
+    },
+    {
+      "name": "Scoring Module",
+      "path": "app/core/learning/policies/scoring.py",
+      "purpose": "Compute policy score using confidence, success_rate, recency, priority"
+    },
+    {
+      "name": "Policy Store",
+      "path": "app/core/learning/policies/policy_store.py",
+      "purpose": "Fetch policies and attach metrics from DB"
+    },
+    {
+      "name": "Feedback Collector",
+      "path": "app/core/learning/collectors/feedback_collector.py",
+      "purpose": "Collect execution feedback and update policy metrics"
+    },
+    {
+      "name": "Policy Metrics Table",
+      "type": "database",
+      "purpose": "Store success_count, failure_count, avg_latency, last_updated"
+    },
+    {
+      "name": "Run Script",
+      "path": "scripts/run.sh",
+      "purpose": "Stop old processes, start server and worker, manage logs"
+    }
+  ],
+  "inputs": [
+    {
+      "type": "API Request",
+      "endpoint": "/job",
+      "structure": {
+        "type": "string",
+        "payload": "JSON object"
+      }
+    },
+    {
+      "type": "Policy Data",
+      "source": "policies table",
+      "fields": [
+        "id",
+        "agent_type",
+        "condition",
+        "action",
+        "weight",
+        "approval_status"
+      ]
+    },
+    {
+      "type": "Execution Feedback",
+      "source": "executor",
+      "fields": ["success", "failure", "latency"]
+    }
+  ],
+  "outputs": [
+    {
+      "type": "API Response",
+      "fields": ["job_id", "policy", "queue"]
+    },
+    {
+      "type": "Worker Logs",
+      "content": [
+        "job execution status",
+        "queue processing",
+        "success/failure logs"
+      ]
+    },
+    {
+      "type": "Server Logs",
+      "content": [
+        "API requests",
+        "policy selection logs",
+        "metrics endpoint activity"
+      ]
+    },
+    {
+      "type": "Database Updates",
+      "tables": ["jobs", "policy_metrics", "outcomes_log"]
+    }
+  ],
+  "dependencies": [
+    "FastAPI",
+    "Uvicorn",
+    "Redis",
+    "RQ (Redis Queue)",
+    "PostgreSQL",
+    "SQLAlchemy",
+    "Pydantic",
+    "Python 3.12",
+    "Linux process tools (pkill, lsof, nohup)"
+  ],
+  "status": "partial",
+  "notes": "Job execution, policy selection, and queue system are operational. policy_id assignment confirmed. Worker successfully processes jobs across queues. However, policy_metrics table remains empty, indicating update_policy_metrics not executing or not persisting correctly. Server lifecycle issues resolved via run.sh but system lacks automated supervision (systemd not implemented). Learning feedback loop not fully validated."
+}

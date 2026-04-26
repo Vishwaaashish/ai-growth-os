@@ -1,6 +1,5 @@
 import subprocess
-import logging
-logger = logging.getLogger(__name__)
+from app.core.logger import logger
 
 class InfraManager:
 
@@ -10,7 +9,11 @@ class InfraManager:
             containers = result.decode().strip().split("\n")
             return [c for c in containers if "worker" in c]
         except Exception as e:
-            logger.error(f"[SAFE RETURN EMPTY LIST] {str(e)}", exc_info=True)
+            logger.error(
+                "safe_return_empty_list",
+                extra={"error": str(e)},
+                exc_info=True
+            )
             return []
 
     def scale(self, count: int):

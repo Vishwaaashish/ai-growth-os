@@ -1,6 +1,13 @@
+from app.core.config.config import settings
+
+
 import redis
 
-r = redis.Redis(host='localhost', port=6379, decode_responses=True)
+redis_client = redis.Redis(
+    host=settings.REDIS_HOST,
+    port=6379,
+    decode_responses=True
+)
 
 def push_learning_event(data):
     r.xadd("learning:stream", data)

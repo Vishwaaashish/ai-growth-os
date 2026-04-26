@@ -1,40 +1,78 @@
 #!/bin/bash
 
-# 🔷 Move to backend
-cd "$(dirname "$0")/../backend"
+cd "$(dirname "$0")/.."
 
-echo "🔴 Stopping old processes..."
+echo "⚙️ Lightweight Restart Initiated..."
 
-pkill -f "uvicorn app.main:app"
-pkill -f "rq worker"
+# -------------------------------
+# PORT CLEANUP (SAFE)
+# -------------------------------
+echo "🧹 Checking port 8000..."
 
-sleep 2
+PID=$(lsof -ti:8000 2>/dev/null)
 
-echo "🧹 Cleaning port 8000..."
-
-PID=$(lsof -ti:8000)
 if [ ! -z "$PID" ]; then
-  kill -9 $PID
+  echo "⚠️ Killing process on port 8000 (PID: $PID)"
+  kill -9 $PID 2>/dev/null || true
+else
+  echo "✅ Port 8000 already clean"
 fi
 
-echo "⚙️ Activating environment..."
+# -------------------------------
+# SERVICE VALIDATION
+# -------------------------------
+echo "🔍 Detecting services..."
 
-source venv/bin/activate
+SERVICES=$(docker compose config --services)
 
-echo "🚀 Starting server..."
+echo "📦 Available services:"
+echo "$SERVICES"
+echo ""
 
-nohup uvicorn app.main:app --host 0.0.0.0 --port 8000 > ../server.log 2>&1 &
+# -------------------------------
+# TARGET SERVICES (EDIT IF NEEDED)
+# -------------------------------
+TARGET_SERVICES="api worker learning"
 
+# Validate services exist
+VALID_SERVICES=""
+
+for svc in $TARGET_SERVICES; do
+  if echo "$SERVICES" | grep -q "^$svc$"; then
+    VALID_SERVICES="$VALID_SERVICES $svc"
+  else
+    echo "⚠️ Service '$svc' NOT FOUND in docker-compose"
+  fi
+done
+
+if [ -z "$VALID_SERVICES" ]; then
+  echo "❌ No valid services to restart. Exiting."
+  exit 1
+fi
+
+echo ""
+echo "🚀 Restarting services:$VALID_SERVICES"
+
+# -------------------------------
+# RESTART / START LOGIC
+# -------------------------------
+docker compose up -d $VALID_SERVICES
+
+# -------------------------------
+# STATUS CHECK
+# -------------------------------
 sleep 2
 
-echo "🚀 Starting worker..."
+echo ""
+echo "📊 Service Status:"
+docker compose ps
 
-nohup rq worker high default low dead > ../worker.log 2>&1 &
+echo ""
+echo "✅ SYSTEM READY"
+echo "🌐 API: http://localhost:8000/docs"
 
-sleep 2
-
-echo "✅ System running"
-
-echo "📊 Logs:"
-echo "tail -f server.log"
-echo "tail -f worker.log"
+echo ""
+echo "📄 Logs (if needed):"
+echo "docker compose logs -f api"
+echo "docker compose logs -f worker"
+echo "docker compose logs -f learning"

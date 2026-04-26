@@ -1,3 +1,4 @@
+from app.core.logger import logger
 from rq import Worker, Queue
 from app.queue.redis import redis_conn
 from app.core.metrics import job_retry_total
@@ -17,5 +18,5 @@ if __name__ == "__main__":
 
     worker = InstrumentedWorker(queues, connection=redis_conn)
 
-    print("🚀 Worker started with metrics enabled...")
+    logger.info("worker_started", extra={"message": "Worker started with metrics enabled"})
     worker.work()

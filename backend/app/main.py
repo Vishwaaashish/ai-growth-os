@@ -1,3 +1,11 @@
+from sqlalchemy import text
+from app.core.logger import logger
+from app.db.session import SessionLocal
+from fastapi import Depends
+from app.core.security.api_key_guard import verify_api_key
+from app.api.routes.secure_routes import secure_router
+
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from fastapi.responses import Response
 from prometheus_client import (
@@ -10,7 +18,6 @@ from prometheus_client import (
 
 import subprocess
 import random
-import logging
 import time
 import json
 
@@ -21,6 +28,7 @@ from app.core.redis_client import redis_client
 from app.decision_engine import decision_engine
 from app.orchestrator.orchestrator import Orchestrator
 
+
 # ✅ PHASE 5 IMPORTS
 from app.planner.goal_planner import GoalPlanner
 from app.planner.plan_executor import PlanExecutor
@@ -28,13 +36,40 @@ from app.planner.goal_store import GoalStore
 
 from app.api.routes.metrics import router as metrics_router
 from app.api.routes.job import router as job_router
+from app.api.routes.system_admin_routes import system_admin_router
+from app.api.routes.tenant_admin_routes import tenant_admin_router
+# backend/app/main.py
+from app.api.routes.creative import router as creative_router
+from app.api.routes.health_routes import health_router
+from app.core.middleware import TraceMiddleware
+from app.api.routes.auth_routes import auth_router
+from app.api.routes.subscription_routes import subscription_router
+from app.api.routes.billing_routes import billing_router
+from app.api.routes.dashboard import router as dashboard_router
 
 app = FastAPI()
 
 app.include_router(job_router)
 app.include_router(metrics_router)
 
-logging.basicConfig(level=logging.INFO)
+app.include_router(creative_router)
+app.include_router(health_router)
+app.include_router(tenant_admin_router)
+app.add_middleware(TraceMiddleware)
+app.include_router(auth_router)
+app.include_router(secure_router)
+app.include_router(subscription_router)
+app.include_router(billing_router)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # allow all (dev mode)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(system_admin_router)
+app.include_router(dashboard_router)
 
 # =========================
 # METRICS
@@ -104,7 +139,9 @@ def metrics():
 # SIMULATION (CONTROLLED TESTING)
 # =========================
 @app.post("/simulate")
-async def simulate(request: Request):
+async def simulate(request: Request, auth=Depends(verify_api_key)):
+    tenant_id = auth["tenant_id"]
+
     data = await request.json()
 
     # Set queue size
@@ -183,7 +220,8 @@ async def set_goal(request: Request):
 
 # 9.2 EXECUTE GOAL
 @app.get("/execute-goal")
-async def execute_goal():
+async def execute_goal(auth=Depends(verify_api_key)):
+    tenant_id = auth["tenant_id"]
 
     goal = goal_store.get_goal()
 
@@ -220,3 +258,32 @@ def health():
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
+
+#@app.middleware("http")
+#async def api_key_middleware(request: Request, call_next):
+
+    # Allow health & metrics without auth
+#    if (
+ #       request.url.path in ["/health", "/metrics", "/docs", "/openapi.json"]
+  #      or request.url.path.startswith("/admin")
+#    ):
+ #       return await call_next(request)
+
+  #  validate_api_key(request)
+
+   # response = await call_next(request)
+   # return response
+
+
+@app.on_event("startup")
+def startup_check():
+    try:
+        db = SessionLocal()
+        db.execute(text("SELECT 1"))
+        db.close()
+        logger.info("db_connected")
+    except Exception as e:
+        logger.error("db_connection_failed", extra={
+            "error": str(e)
+        })
+        raise e

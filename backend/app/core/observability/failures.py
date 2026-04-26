@@ -1,9 +1,22 @@
-from app.core.observability.logger import get_logger
+# app/core/observability/failures.py
 
-logger = get_logger("failure")
+from app.core.logger import logger
 
-def log_failure(context):
-    logger.error({
-        "type": "failure_event",
-        **context
-    })
+
+def log_failure(data: dict):
+    try:
+        logger.error(
+            "system_failure",
+            extra={
+                "failure": data
+            }
+        )
+    except Exception as e:
+        # fallback to avoid crash loop
+        logger.error(
+            "failure_logging_error",
+            extra={
+                "error": str(e),
+                "original_failure": data
+            }
+        )

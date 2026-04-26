@@ -1,9 +1,9 @@
 import time
 
+from app.core.logger import logger
 from app.worker.executor import execute_job
 from app.core.metrics import job_success_total, job_failure_total, worker_execution_time
-import logging
-logger = logging.getLogger(__name__)
+
 
 
 # ---------------------------
@@ -22,7 +22,11 @@ def instrumented_task(func):
 
         except Exception as e:
             job_failure_total.inc()
-            logger.error(f"[TASK ERROR] {str(e)}", exc_info=True)
+            logger.error(
+                "task_error",
+                extra={"error": str(e)},
+                exc_info=True
+            )
             raise
 
         finally:

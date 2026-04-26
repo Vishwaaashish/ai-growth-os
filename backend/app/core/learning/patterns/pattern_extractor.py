@@ -7,32 +7,39 @@ def extract_patterns():
     try:
         result = db.execute(text("""
             SELECT
-                policy_id,
-                success_count,
-                failure_count,
-                avg_latency
-            FROM policy_metrics
+                campaign_id,
+                ctr,
+                cpa
+            FROM campaign_metrics
         """))
 
         patterns = []
 
         for row in result:
-            total = (row.success_count or 0) + (row.failure_count or 0)
 
-            success_rate = (
-                (row.success_count or 0) / total if total > 0 else 0
-            )
+            success_rate = float(row.ctr or 0)
+            avg_latency = float(row.cpa or 0)
+
+            # 🔥 PATTERN CLASSIFICATION
+            if success_rate > 0.06:
+                pattern_type = "high_success"
+            elif success_rate < 0.02:
+                pattern_type = "high_failure"
+            else:
+                pattern_type = "neutral"
 
             patterns.append({
-                "policy_id": row.policy_id,
+                "policy_id": row.campaign_id,   # ⚠️ reuse field
                 "success_rate": success_rate,
-                "avg_latency": float(row.avg_latency or 0),
-                "total_runs": total
+                "avg_latency": avg_latency,
+                "total_runs": 1,
+                "pattern": pattern_type
             })
 
-        return patterns   # ✅ LIST (CRITICAL FIX)
+        return patterns
 
     finally:
         db.close()
+
 
 

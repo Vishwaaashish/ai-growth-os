@@ -1,12 +1,17 @@
+from app.core.config.config import settings
 import json
 import time
 import redis
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.db.session import SessionLocal
+from app.core.logger import logger
 
-
-r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+r = redis.Redis(
+    host=settings.REDIS_HOST,
+    port=6379,
+    decode_responses=True
+)
 
 STREAM_KEY = "learning:stream"
 
@@ -36,14 +41,14 @@ def process_event(event_data: dict, db: Session):
         )
         db.commit()
 
-        print("✅ Insight stored:", pattern_type)
+        logger.info("insight_stored", extra={"pattern_type": pattern_type})
 
     except Exception as e:
-        print("❌ Processor Error:", str(e))
+        logger.error("processor_error", extra={"error": str(e)})
 
 
 def run_processor():
-    print("🚀 Learning Processor Started...")
+    logger.info("learning_processor_started")
 
     last_id = "0"
 
@@ -71,5 +76,5 @@ def run_processor():
                     last_id = message_id
 
         except Exception as e:
-            print("❌ Stream Error:", str(e))
+            logger.error("stream_error", extra={"error": str(e)})
             time.sleep(2)

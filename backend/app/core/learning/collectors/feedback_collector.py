@@ -1,6 +1,7 @@
 import time
 from sqlalchemy import text
 from app.core.security.metrics_guard import validate_metrics
+from app.core.logger import logger
 
 def update_policy_metrics(db, policy_id: int, success: bool, latency: int):
     try:
@@ -65,8 +66,8 @@ def update_policy_metrics(db, policy_id: int, success: bool, latency: int):
 
         db.commit()
 
-        print(f"📊 Metrics updated for policy {policy_id}")
+        logger.info("metrics_updated", extra={"policy_id": policy_id})
 
     except Exception as e:
-        print(f"❌ Metrics update failed: {str(e)}")
+        logger.error("metrics_update_failed", extra={"error": str(e)})
         db.rollback()

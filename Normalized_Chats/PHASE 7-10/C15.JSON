@@ -1,0 +1,80 @@
+{
+  "chat_id": "stabilization_scoring_integration_phase7_1",
+  "objective": "Integrate recency decay, metrics integrity validation, and externalized configuration into an existing scoring system without modifying compute_policy_score signature, policy_engine behavior, or execution flow.",
+  "decisions": [
+    "Do not redesign scoring system; only additive integration allowed",
+    "Preserve compute_policy_score(policy, metrics) as system entrypoint",
+    "Inject new scoring logic inside compute_policy_score as a wrapper",
+    "Introduce compute_score as internal scoring engine",
+    "Add validate_metrics before scoring execution",
+    "Apply recency decay after weighted score computation",
+    "Externalize weights, bounds, and decay parameters into scoring_config.py",
+    "Use safe fallback (return 0.0) on any scoring failure",
+    "Extract last_used_timestamp from policy first, then metrics, else fallback",
+    "Ensure deterministic behavior (no randomness, controlled time dependency)",
+    "Do not modify policy_engine or execution flow",
+    "Do not rename existing functions",
+    "Clamp invalid metric values within predefined bounds",
+    "Treat latency as inverse metric during normalization",
+    "Use exponential decay for recency factor with lower bound cap",
+    "Ensure backward compatibility under all conditions"
+  ],
+  "built_components": [
+    {
+      "name": "compute_policy_score",
+      "type": "wrapper_function",
+      "description": "Primary scoring entrypoint extended to include validation, recency handling, and new scoring logic"
+    },
+    {
+      "name": "compute_score",
+      "type": "scoring_core",
+      "description": "Calculates weighted normalized score and applies recency decay"
+    },
+    {
+      "name": "validate_metrics",
+      "type": "validation_layer",
+      "description": "Validates and clamps metric values based on config bounds"
+    },
+    {
+      "name": "compute_recency_factor",
+      "type": "decay_function",
+      "description": "Computes exponential decay factor using last_used_timestamp"
+    },
+    {
+      "name": "normalize",
+      "type": "utility_function",
+      "description": "Normalizes metric values within defined bounds"
+    },
+    {
+      "name": "safe_fallback",
+      "type": "error_handling",
+      "description": "Returns default score (0.0) on failure"
+    },
+    {
+      "name": "SCORING_CONFIG",
+      "type": "configuration",
+      "description": "External configuration for weights, bounds, and recency decay parameters"
+    }
+  ],
+  "inputs": [
+    "policy object (may contain last_used_timestamp)",
+    "metrics dictionary (may contain success_rate, latency, resource_efficiency, confidence, last_used_timestamp)",
+    "system time (time.time())",
+    "SCORING_CONFIG parameters"
+  ],
+  "outputs": [
+    "final policy score (float)",
+    "normalized and validated metrics (internal)",
+    "recency-adjusted score (internal)"
+  ],
+  "dependencies": [
+    "backend.app.config.scoring_config",
+    "math module",
+    "time module",
+    "existing policy_engine (consumer of compute_policy_score)",
+    "metrics data structure",
+    "policy object structure"
+  ],
+  "status": "partial",
+  "notes": "Code for scoring.py and scoring_config.py has been fully defined and aligned with constraints, but deployment, system restart, timestamp source verification, and runtime validation are not confirmed as executed."
+}

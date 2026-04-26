@@ -1,55 +1,49 @@
 import logging
-import sys
 import json
+import sys
 from datetime import datetime
 
 
-class JSONFormatter(logging.Formatter):
+class JsonFormatter(logging.Formatter):
     def format(self, record):
         log_record = {
             "timestamp": datetime.utcnow().isoformat(),
             "level": record.levelname,
+            "service": "api",
+            "message": record.getMessage(),
             "logger": record.name,
             "module": record.module,
             "function": record.funcName,
             "line": record.lineno,
-            "message": record.getMessage(),
         }
 
-        # ✅ Attach structured dict logs (core requirement)
-        if isinstance(record.msg, dict):
-            log_record.update(record.msg)
+        # Attach structured metadata from `extra={}`
+        for key, value in record.__dict__.items():
+            if key not in (
+                "name", "msg", "args", "levelname", "levelno",
+                "pathname", "filename", "module", "exc_info",
+                "exc_text", "stack_info", "lineno", "funcName",
+                "created", "msecs", "relativeCreated", "thread",
+                "threadName", "processName", "process"
+            ):
+                log_record[key] = value
 
-        # ✅ Attach trace_id if passed via extra
-        if hasattr(record, "trace_id"):
-            log_record["trace_id"] = record.trace_id
-
-        # ✅ Attach job_id if exists
-        if hasattr(record, "job_id"):
-            log_record["job_id"] = record.job_id
-
-        # ✅ Attach exception info safely
+        # Attach exception info if exists
         if record.exc_info:
             log_record["exception"] = self.formatException(record.exc_info)
 
         return json.dumps(log_record)
 
 
-def get_logger(name: str):
-    logger = logging.getLogger(name)
+# 🔒 SINGLE SOURCE LOGGER (GLOBAL)
+logger = logging.getLogger("ai-growth-os")
 
-    # Prevent duplicate handlers (important in FastAPI reload)
-    if logger.handlers:
-        return logger
-
+# Prevent duplicate handlers (important for reloads / workers)
+if not logger.handlers:
     logger.setLevel(logging.INFO)
 
     handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(JSONFormatter())
+    handler.setFormatter(JsonFormatter())
 
     logger.addHandler(handler)
-
-    # Prevent duplicate logs from root logger
     logger.propagate = False
-
-    return logger

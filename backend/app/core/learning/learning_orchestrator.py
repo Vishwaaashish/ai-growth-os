@@ -1,146 +1,143 @@
 from app.db.session import SessionLocal
 from sqlalchemy import text
-import logging
+from app.core.logger import logger
 import json
-
-from app.core.security.policy_guard import validate_policy
 
 from app.core.learning.patterns.pattern_extractor import extract_patterns
 from app.core.learning.generators.policy_generator import generate_policies_from_patterns
 from app.core.learning.validators.policy_validator import validate_policies
+from app.core.learning.pruning.policy_pruner import prune_policies
 
-from app.core.learning.approvals.approval_manager import approve_policies
-from app.core.learning.evolution import evolve_policies
-
-#def save_policies_to_db(policies):
-#    db = SessionLocal()
-
-#    try:
-#        for p in policies:
-
-            # 🔴 PREVENT DUPLICATES
-#            exists = db.execute(text(""")
-#                SELECT 1 FROM policies
-#                WHERE agent_type = :agent_type
-#                AND action::jsonb = :action::jsonb
-#                LIMIT 1
-#            """), {
-#                "agent_type": p["agent_type"],
-#                "action": json.dumps(p["action"])
-#            }).fetchone()
-
-#            if exists:
-#                continue
-
-#            db.execute(text(""")
-#                INSERT INTO policies (agent_type, condition, action, weight, approval_status)
-#                VALUES (:agent_type, :condition, :action, :weight, :approval_status)
-#            """), {
-#                "agent_type": p["agent_type"],
-#                "agent_name": p["agent_name"],
-#                "condition": "{}",
-#                "action": json.dumps(p["action"]),
-#                "weight": p["weight"],
-#                "approval_status": p["approval_status"]
-#            })
-
-#        db.commit()
-
-#    finally:
-#        db.close()
 
 def run_learning_cycle():
-
-    logger = logging.getLogger(__name__)
-
     db = SessionLocal()
 
     try:
-        # STEP 1: Extract patterns
+        # =========================
+        # STEP 1: PATTERN EXTRACTION
+        # =========================
         patterns = extract_patterns()
-        print(f"Patterns: {len(patterns)}")
-        print("PATTERNS DATA:", patterns)
+        logger.info("patterns_extracted", extra={"count": len(patterns)})
 
         if not patterns:
-            logger.info("No patterns found")
+            logger.info("learning_skipped_no_patterns")
             return
 
-        # STEP 2: Generate policies
+        # =========================
+        # STEP 2: POLICY GENERATION
+        # =========================
         generated = generate_policies_from_patterns(patterns)
-        print(f"Generated: {len(generated)}")
-        print("GENERATED DATA:", generated)
+        logger.info("policies_generated", extra={"count": len(generated)})
 
         if not generated:
-            logger.info("No policies generated")
+            logger.info("learning_skipped_no_generated")
             return
 
-        # STEP 3: Validate
+        # =========================
+        # STEP 3: VALIDATION
+        # =========================
         valid = validate_policies(generated)
-        print(f"Valid: {len(valid)}")
+        logger.info("policies_validated", extra={"count": len(valid)})
 
         if not valid:
-            logger.info("No valid policies")
+            logger.info("learning_skipped_no_valid")
             return
 
         created_count = 0
 
-
-        # STEP 4: Insert safely (NO DUPLICATION)
+        # =========================
+        # STEP 4: SAFE INSERTION
+        # =========================
         for p in valid:
 
-            if not isinstance(p.get("action"), dict):
+            agent_type = p.get("agent_type")
+            action = p.get("action", {})
+            condition = p.get("condition", {})
+            weight = float(p.get("weight", 1.0))
+
+            # 🔒 VALIDATION GUARD
+            if not isinstance(action, dict):
                 continue
 
-            existing = db.execute(text("""
-                SELECT COUNT(*) FROM policies
+            if weight <= 0:
+                continue
+
+            # 🔁 DUPLICATE CHECK (JSONB SAFE)
+            exists = db.execute(text("""
+                SELECT 1 FROM policies
                 WHERE agent_type = :agent_type
-                 AND action = CAST(:action AS JSONB)
+                AND condition::jsonb = CAST(:condition AS JSONB)
+                AND action::jsonb = CAST(:action AS JSONB)
+                LIMIT 1
             """), {
-                "agent_type": p.get("agent_type"),
-                "action": json.dumps(p.get("action"))
-            }).scalar()
+                "agent_type": agent_type,
+                "condition": json.dumps(condition),
+                "action": json.dumps(action)
+            }).fetchone()
 
-
-            if existing > 0:
+            if exists:
                 continue
 
+            # ✅ INSERT POLICY
             db.execute(text("""
-                INSERT INTO policies (agent_type, condition, action, weight, approval_status)
-                VALUES (:agent_type, :condition, :action, :weight, 'approved')
+                INSERT INTO policies (
+                    agent_type,
+                    condition,
+                    action,
+                    weight,
+                    approval_status,
+                    score,
+                    usage_count
+                )
+                VALUES (
+                    :agent_type,
+                    :condition,
+                    :action,
+                    :weight,
+                    'approved',
+                    :score,
+                    :usage_count
+                )
             """), {
-                "agent_type": p.get("agent_type"),
-                "condition": str(p.get("condition", {})),
-                "action": json.dumps(p.get("action")),
-                "weight": p.get("weight", 1)
+                "agent_type": agent_type,
+                "condition": json.dumps(condition),
+                "action": json.dumps(action),
+                "weight": weight,
+                "score": 0.1,
+                "usage_count": 0
             })
 
             created_count += 1
 
+        # ✅ COMMIT AFTER LOOP
         db.commit()
 
-        logger.info(f"Learning cycle completed → created={created_count}")
+        # =========================
+        # STEP 5: PRUNE (OUTSIDE LOOP)
+        # =========================
+        prune_policies()
+
+        # =========================
+        # STEP 6: LOGGING
+        # =========================
+        logger.info(
+            "learning_cycle_completed",
+            extra={
+                "patterns": len(patterns),
+                "generated": len(generated),
+                "valid": len(valid),
+                "policies_created": created_count
+            }
+        )
 
     except Exception as e:
-        logger.error(f"Learning cycle failed: {str(e)}")
         db.rollback()
 
-    finally:
-        db.close()
-
-def prune_policies():
-    db = SessionLocal()
-
-    try:
-        db.execute(text("""
-            DELETE FROM policies
-            WHERE id IN (
-                SELECT id FROM policies
-                ORDER BY weight ASC
-                LIMIT 10
-            )
-        """))
-
-        db.commit()
+        logger.error(
+            "learning_cycle_failed",
+            extra={"error": str(e)},
+            exc_info=True
+        )
 
     finally:
         db.close()

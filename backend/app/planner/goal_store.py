@@ -1,6 +1,5 @@
 import json
-import logging
-logger = logging.getLogger(__name__)
+from app.core.logger import logger
 
 GOAL_KEY = "active_goal"
 
@@ -35,7 +34,11 @@ class GoalStore:
             return json.loads(data)
 
         except Exception as e:
-            logger.error(f"[GOAL STORE ERROR] {str(e)}", exc_info=True)
+            logger.error(
+                "goal_store_error",
+                extra={"error": str(e)},
+                exc_info=True
+            )
             return None
 
 

@@ -1,10 +1,7 @@
-import logging
+from app.core.logger import logger
 from app.core.infra_manager import InfraManager
 from app.core.learning.policies.scoring import compute_policy_score
 from app.core.learning.policies.policy_engine import get_fallback_policy
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 # 🔷 CORE DECISION ENGINE (INFRA ACTIONS)
@@ -54,8 +51,8 @@ def select_best_policy(policies):
     for p in policies:
         metrics = p.get("metrics", {})  # SAFE EXTRACTION
 
-        logger.debug(f"POLICY INPUT: {p}")
-        logger.debug(f"EXTRACTED METRICS: {p.get('metrics')}")
+        logger.debug("policy_input", extra={"data": p})
+        logger.debug("extracted_metrics", extra={"data": p.get("metrics")})
 
         score = compute_policy_score(p, metrics)
 
@@ -139,6 +136,7 @@ if __name__ == "__main__":
 
     best, ranked = select_best_policy(test_policies)
 
-    print("\n=== FINAL OUTPUT ===")
-    print("BEST POLICY:", best)
-    print("RANKED:", ranked)
+    logger.info("final_output", extra={
+        "best_policy": best,
+        "ranked": ranked
+    })

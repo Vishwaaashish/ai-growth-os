@@ -1,4 +1,10 @@
+
+
 services:
+
+  # =========================
+  # MONITORING STACK
+  # =========================
 
   alertmanager:
     image: prom/alertmanager
@@ -14,6 +20,7 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus
+    restart: always
     volumes:
       - ./monitoring/prometheus:/etc/prometheus
     ports:
@@ -28,29 +35,139 @@ services:
   grafana:
     image: grafana/grafana
     container_name: grafana
+    restart: always
     ports:
       - "3000:3000"
     networks:
       - monitoring
-    
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - ./monitoring/promtail:/etc/promtail
+    command: -config.file=/etc/promtail/promtail.yml
+    networks:
+      - monitoring
+
+  n8n:
+    image: n8nio/n8n
+    container_name: n8n
+    restart: always
+    ports:
+      - "5678:5678"
+    networks:
+      - monitoring
+
+  # =========================
+  # CORE INFRA
+  # =========================
+
   redis:
     image: redis:7
     container_name: ai-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
     ports:
       - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
-  worker:
-    image: python:3.12
-    working_dir: /app
+  db:
+    image: postgres:15
+    container_name: ai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ai_growth
+    ports:
+      - "5432:5432"
+    volumes:
+      - ai-growth-os_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # =========================
+  # APPLICATION LAYER
+  # =========================
+
+  api:
+    build: ./backend
+    container_name: ai-api
+    restart: unless-stopped
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
     volumes:
       - ./backend:/app
-    command: sh -c "pip install redis && python worker.py"
-    depends_on:
-      - redis
-    environment:
-      - REDIS_HOST=redis
 
+  worker:
+    build: ./backend
+    container_name: ai-worker
+    restart: unless-stopped
+    command: rq worker high default low dead
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://admin:admin@db:5432/ai_growth
+    volumes:
+      - ./backend:/app
+
+  learning:
+    build: ./backend
+    container_name: ai-learning
+    restart: unless-stopped
+    command: python -m app.core.learning.workers.learning_worker
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://admin:admin@db:5432/ai_growth
+    volumes:
+      - ./backend:/app
+
+# =========================
+# NETWORKS + VOLUMES
+# =========================
 
 networks:
   monitoring:
     driver: bridge
+
+volumes:
+  ai-growth-os_pgdata:
+  redis_data:

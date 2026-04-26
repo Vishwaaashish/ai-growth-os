@@ -1,0 +1,100 @@
+{
+  "chat_id": "phase6_learning_memory_ai_growth_os",
+  "objective": "Design and implement Phase 6 (Learning + Memory System) within AI Growth OS while maintaining strict architectural layering, deterministic behavior, and backward compatibility.",
+  "decisions": [
+    "Memory retention policy defined as hybrid (short-term Redis with TTL 3600 seconds + long-term SQLite persistence)",
+    "Long-term promotion trigger defined as repeated events ≥ 3 times or high-impact events (failure/success spike)",
+    "Eviction strategy defined as TTL-based for short-term and score-based pruning (future Phase 7)",
+    "Learning signal defined as composite model with weighted inputs (execution outcome 0.5, system metrics 0.3, planner efficiency 0.2)",
+    "Learning score threshold defined as 0.7 for promotion to long-term memory",
+    "Access control defined with strict layering: orchestrator (read/write via wrapper), agents (read + report only), planner (read-only), wrappers and engine (full access)",
+    "No direct infra access allowed outside wrapper layer",
+    "Agents must not write memory directly and must use standardized report_outcome()",
+    "Planner allowed to be memory-aware but not write to memory",
+    "Backward compatibility enforced (no endpoint or contract breaking)",
+    "System must remain deterministic and avoid uncontrolled learning behavior",
+    "Phase 6 implemented as minimal viable learning system to enable transition from L2 (reactive) to L3 (adaptive)"
+  ],
+  "built_components": [
+    {
+      "component": "Memory Engine",
+      "type": "module",
+      "details": "Handles event storage, retrieval, and promotion to long-term memory"
+    },
+    {
+      "component": "Memory Store",
+      "type": "module",
+      "details": "Redis-based short-term storage with TTL"
+    },
+    {
+      "component": "Learning Engine",
+      "type": "module",
+      "details": "Computes weighted score and triggers long-term promotion"
+    },
+    {
+      "component": "Memory Adapter",
+      "type": "wrapper",
+      "details": "Controls read/write access between system layers and memory"
+    },
+    {
+      "component": "Feedback Handler",
+      "type": "workflow",
+      "details": "Standardizes agent outcome reporting and triggers learning updates"
+    },
+    {
+      "component": "SQLite Database",
+      "type": "infra",
+      "details": "Persistent storage for long-term memory (table: long_term_memory)"
+    },
+    {
+      "component": "Redis",
+      "type": "infra",
+      "details": "Short-term memory store with TTL"
+    },
+    {
+      "component": "Orchestrator Memory Injection",
+      "type": "integration",
+      "details": "Reads memory context and injects into execution context"
+    },
+    {
+      "component": "Agent Feedback Integration",
+      "type": "integration",
+      "details": "Agents report outcomes using report_outcome()"
+    },
+    {
+      "component": "Planner Memory Hook",
+      "type": "integration",
+      "details": "Planner can access memory context for adaptive planning (placeholder)"
+    }
+  ],
+  "inputs": [
+    "User-defined system constraints for AI Growth OS (multi-phase architecture, strict layering, deterministic execution)",
+    "Phase completion state (Phase 0–5 completed, system stable at L2)",
+    "User confirmation to proceed with Phase 6",
+    "User inability to define retention, signal, and access leading to assistant-driven recommendations",
+    "Final user confirmation of Phase 6 configuration"
+  ],
+  "outputs": [
+    "Defined Phase 6 architecture aligned with existing system",
+    "Finalized configuration for memory retention, learning signals, and access scope",
+    "Directory structure for new modules",
+    "Six complete implementation files (db.py, memory_store.py, memory_engine.py, learning_engine.py, memory_adapter.py, feedback_handler.py)",
+    "Integration instructions for orchestrator, agents, and planner",
+    "Validation steps using Redis and SQLite",
+    "Forensic phase-state JSON",
+    "Current structured system extraction JSON"
+  ],
+  "dependencies": [
+    "FastAPI (control plane integration)",
+    "Redis (short-term memory storage)",
+    "SQLite (long-term persistent storage)",
+    "Docker (existing infra control)",
+    "Prometheus (metrics source for learning signal)",
+    "Existing orchestrator (routing and context injection)",
+    "Existing agents (execution units)",
+    "Existing planner (goal-to-plan conversion)",
+    "Python runtime environment"
+  ],
+  "status": "partial",
+  "notes": "Core Phase 6 modules and architecture are fully designed and implemented. However, execution is partial because orchestrator memory injection, agent feedback integration, and planner adaptive logic require manual wiring into existing system. Advanced learning features (adaptive thresholds, pruning, pattern recognition) are deferred to Phase 7."
+}
