@@ -5,95 +5,87 @@ from sqlalchemy import text
 from app.db.session import SessionLocal
 from app.models.job import Job
 
+from app.services.policy_selector import select_policy
+from app.services.action_guard import ActionLimiter
+from app.services.decision_mapper import map_decision_to_action
+
 from app.core.logger import logger
 from app.core.observability.metrics import increment
 from app.core.observability.trace import start_trace, end_trace
 
-from app.core.learning.learning_orchestrator import run_learning_cycle
-from app.core.learning.policies.policy_engine import select_policy
-from app.core.learning.feedback import update_policy_metrics
-from app.core.learning.agents.agent_metrics import update_agent_score
-from app.core.intelligence.memory.learning_memory import store_learning_event
-
+from app.services.synthetic_creative_generator import generate_synthetic_creatives
 from app.core.creative.orchestrator.generation_orchestrator import generate_creatives
 from app.core.creative.selector import select_top_creatives
-
-from app.core.integrations.meta.sync_service import sync_meta_data
-from app.core.security.execution_guard import validate_job_execution
-from app.core.security.circuit_breaker import record_failure
-
-from app.core.intelligence.context.context_builder import build_context
-from app.core.intelligence.goals.goal_engine import get_active_goals
-from app.core.intelligence.planning.planner import build_plan
-from app.core.intelligence.reasoning.reasoning_engine import reason
-from app.core.intelligence.strategy.strategy_selector import select_final_strategy
-
-from app.core.integration.meta_actions import pause_campaign, increase_budget
-from app.core.intelligence.feedback.feedback_optimizer import optimize_from_feedback
-
-from app.core.testing.mock_metrics_engine import update_mock_metrics
-from app.core.testing.fatigue_engine import detect_fatigue
-from app.core.testing.experiment_manager import start_experiment
 from app.core.testing.winner_selector import select_winner
+from app.services.safety_guard import validate_action
+
+from app.core.security.execution_guard import validate_job_execution
+
+from app.services.feedback_worker import process_feedback
 
 
 # =========================
 # HELPERS
 # =========================
 def parse_payload(payload):
-    if payload is None:
-        return {}
     if isinstance(payload, dict):
         return payload
-    if isinstance(payload, str):
+    try:
+        return json.loads(payload) if payload else {}
+    except:
+        return {}
+
+
+def normalize_creatives(creatives):
+    normalized = []
+
+    for c in creatives:
         try:
-            return json.loads(payload)
-        except:
-            return {}
-    return {}
+            if isinstance(c, str):
+                normalized.append({
+                    "creative_id": c,
+                    "ctr": 0.5,
+                    "roas": 1.0,
+                    "cpa": 200
+                })
+                continue
+
+            if hasattr(c, "_mapping"):
+                data = dict(c._mapping)
+            elif isinstance(c, dict):
+                data = c
+            else:
+                continue
+
+            cid = data.get("creative_id") or data.get("id")
+            if not cid:
+                continue
+
+            normalized.append({
+                "creative_id": cid,
+                "ctr": float(data.get("ctr", 0.5)),
+                "roas": float(data.get("roas", 1.0)),
+                "cpa": float(data.get("cpa", 200)),
+            })
+
+        except Exception as e:
+            print("[NORMALIZE ERROR]", str(e))
+
+    return normalized
 
 
 # =========================
-# AI JOB EXECUTION
-# =========================
-def execute_ai_job(job, payload):
-    mode = payload.get("mode", "default")
-
-    logger.info("ai_job_execution_started", extra={
-        "job_id": str(job.id),
-        "mode": mode
-    })
-
-    if mode == "explore":
-        time.sleep(1.5)
-    elif mode == "exploit":
-        time.sleep(0.5)
-    else:
-        time.sleep(1)
-
-    result = {"status": "success", "mode": mode}
-
-    logger.info("ai_job_execution_completed", extra={
-        "job_id": str(job.id)
-    })
-
-    return result
-
-
-# =========================
-# EXECUTOR
+# MAIN EXECUTOR
 # =========================
 def execute_job(job_id):
     db = SessionLocal()
     trace = start_trace()
     start_time = time.time()
 
-    job = None
-    policy_id = None
-    agent_name = "fallback"
-
     try:
-        # STEP 1: FETCH JOB
+        # =========================
+        # FETCH JOB
+        # =========================
         job = db.query(Job).filter(Job.id == job_id).first()
         if not job:
             return {"error": "Job not found"}
@@ -104,198 +96,188 @@ def execute_job(job_id):
         payload = parse_payload(job.payload)
 
         # =========================
-        # META SYNC
-        # =========================
-        if payload.get("enable_meta_sync", False):
-            try:
-                sync_meta_data(
-                    ad_account_id=payload.get("ad_account_id", "test_account")
-                )
-            except Exception as e:
-                logger.warning("meta_sync_failed", extra={"error": str(e)})
-
-        # =========================
         # POLICY
         # =========================
-        policy, _ = select_policy(job.type, payload)
+        policy = select_policy(db, agent_type="test_job")
         if not policy:
             raise Exception("No policy found")
 
-        policy_id = policy.get("id")
-        agent_name = policy.get("agent_name", "fallback")
+        policy_id = policy["id"]
 
         job.status = "running"
         job.policy_id = policy_id
         db.commit()
 
-        # =========================
-        # INTELLIGENCE
-        # =========================
-        context = build_context(job, payload, db)
-
-        memory = {}
-        metrics = policy.get("metrics", {}) or {}
-        memory["avg_latency"] = metrics.get("avg_latency", 0)
-        memory["success_rate"] = metrics.get("success_rate", 0)
-
-        goals = get_active_goals()
-        plan = build_plan(goals, context)
-
-        decisions = reason(plan, memory)
-        strategy = select_final_strategy(decisions)
-
-        logger.info("strategy_selected", extra={"strategy": strategy})
+        print(f"[POLICY] {policy_id}")
 
         # =========================
-        # CREATIVE SELECTION (FIXED)
+        # CREATIVES
         # =========================
-        selected_creatives = select_top_creatives(limit=5)
+        creatives = select_top_creatives(limit=5)
 
-        if selected_creatives:
-            logger.info("reusing_top_creatives", extra={
-                "count": len(selected_creatives)
-            })
-
-            for cid in selected_creatives:
-                db.execute(text("""
-                    INSERT INTO creative_metrics (
-                        creative_id, ctr, cpa, roas, frequency, updated_at
-                    )
-                    SELECT creative_id, ctr, cpa, roas, frequency, NOW()
-                    FROM creative_metrics
-                    WHERE creative_id = :cid
-                    ORDER BY updated_at DESC
-                    LIMIT 1
-                """), {"cid": cid})
-
-            db.commit()
-
-        else:
-            logger.info("no_top_creatives_found_generating")
-
+        if not creatives:
             generate_creatives(
                 product_id=payload.get("product_id", "default"),
-                ad_account_id=payload.get("ad_account_id", "test_account"),
-                auto_deploy=payload.get("auto_deploy", False)
+                ad_account_id=payload.get("ad_account_id", "test"),
+                auto_deploy=False,
             )
+            creatives = select_top_creatives(limit=5)
+
+        creatives = normalize_creatives(creatives)
+
+        if not creatives:
+            creatives = [
+                {"creative_id": "fallback_1", "ctr": 1.0, "roas": 2.0, "cpa": 120},
+                {"creative_id": "fallback_2", "ctr": 0.8, "roas": 1.5, "cpa": 180},
+            ]
+
+        # CONTROLLED TEST WINNER (SAFE)
+
+        creatives = generate_synthetic_creatives(5)
+
+        winner = select_winner(creatives)
+
+        if not winner:
+            raise Exception("No winner selected")
+
+        creative_id = winner["creative_id"]
+        print(f"[WINNER] {creative_id}")
+
+        # =========================
+        # POLICY CONFIDENCE
+        # =========================
+        row = db.execute(
+            text("SELECT confidence FROM policies WHERE id = :pid"),
+            {"pid": policy_id}
+        ).fetchone()
+
+        confidence = float(row.confidence or 0) if row else 0
+
+        # =========================
+        # DECISION ENGINE
+        # =========================
+        decision_output = map_decision_to_action(
+            policy=policy,
+            confidence=confidence,
+            metrics={
+                "ctr": winner.get("ctr", 0),
+                "roas": winner.get("roas", 0),
+                "cpa": winner.get("cpa", 0),
+            }
+        ) or {}
+
+        action = decision_output.get("action", "hold")
+        decision = decision_output.get("decision", "insufficient_data")
+
+        print(f"[DECISION] {action} | {decision}")
+
+        # =========================
+        # SAFETY LAYER
+        # =========================
+        metrics = {
+            "ctr": winner.get("ctr", 0),
+            "roas": winner.get("roas", 0),
+            "cpa": winner.get("cpa", 0),
+        }
+
+        safety = validate_action(action, metrics, confidence) or {}
+
+        final_action = safety.get("final_action", action)
+        reason = safety.get("reason", "no_reason")
+
+        print(f"[SAFETY] base={action} → final={final_action} | reason={reason}")
+
+        # =========================
+        # LIMITER
+        # =========================
+        limiter = ActionLimiter()
+
+        if not limiter.allow(final_action):
+            print("[BLOCKED]", final_action)
+            final_action = "hold"
+
+        action = final_action
+
+        print(f"[FINAL ACTION] {action}")
+
+        # =========================
+        # LOGGING
+        # =========================
+        try:
+            db.execute(text("""
+                INSERT INTO action_logs (creative_id, action, decision, confidence)
+                VALUES (:cid, :action, :decision, :conf)
+                ON CONFLICT (creative_id, decision, date_trunc('hour', timestamp))
+                DO UPDATE SET
+                    action = EXCLUDED.action,
+                    confidence = EXCLUDED.confidence,
+                    timestamp = NOW()
+            """), {
+                "cid": creative_id,
+                "action": action,
+                "decision": decision,
+                "conf": float(confidence)
+            })
+            db.commit()
+
+        except Exception as e:
+            print("[LOG ERROR]", str(e))
+            db.rollback()
 
         # =========================
         # EXECUTION
         # =========================
-        job_type = (job.type or "").lower()
-
-        try:
-            if job_type == "ai":
-                result = execute_ai_job(job, {**payload, "mode": strategy})
-            else:
-                result = {"status": "success"}
-
-            success = result.get("status") == "success"
-
-        except Exception as e:
-            success = False
-            result = {"status": "failed", "error": str(e)}
-
-        latency = int((time.time() - start_time) * 1000)
+        if action == "scale":
+            print("[EXECUTION] Scaling")
+        elif action == "pause":
+            print("[EXECUTION] Pausing")
+        else:
+            print("[EXECUTION] Hold")
 
         # =========================
-        # PHASE 7 TESTING
-        # =========================
-        update_mock_metrics()
-
-        fatigued = detect_fatigue()
-
-        if fatigued:
-            logger.info("fatigue_triggered", extra={"count": len(fatigued)})
-
-            generate_creatives(
-                product_id=payload.get("product_id", "default"),
-                ad_account_id=payload.get("ad_account_id", "test_account"),
-                auto_deploy=payload.get("auto_deploy", False)
-            )
-
-        winner = select_winner()
-        if winner:
-            logger.info("creative_winner_selected", extra={"creative_id": winner})
-
-        if strategy == "generate_creative":
-            start_experiment(creative_id="latest_batch")
-
-        # =========================
-        # FEEDBACK
-        # =========================
-        optimize_from_feedback(
-            policy_id=policy_id,
-            success=success,
-            latency=latency
-        )
-
-        db.execute(text("""
-            INSERT INTO strategy_memory (
-                policy_id, strategy, success, latency, context
-            )
-            VALUES (
-                :policy_id, :strategy, :success, :latency, :context
-            )
-        """), {
-            "policy_id": policy_id,
-            "strategy": strategy,
-            "success": success,
-            "latency": latency,
-            "context": json.dumps(context)
-        })
-
-        # =========================
-        # POLICY SCORE UPDATE
-        # =========================
-        score_delta = 1.5 if success else -1.0
-        score_delta += 0.5 if latency < 1200 else -0.3
-
-        db.execute(text("""
-            UPDATE policies
-            SET usage_count = COALESCE(usage_count, 0) + 1,
-                last_used = NOW(),
-                score = COALESCE(score, 0) + :score_delta
-            WHERE id = :policy_id
-        """), {
-            "policy_id": policy_id,
-            "score_delta": score_delta
-        })
-
-        # =========================
-        # SAVE RESULT
+        # COMPLETE JOB
         # =========================
         job.status = "completed"
-        job.result = json.dumps(result)
-        job.error = None
+        job.result = json.dumps({
+            "policy_id": str(policy_id),
+            "creative_id": str(creative_id),
+            "decision": decision_output
+        })
+
         db.commit()
 
-        # =========================
-        # LEARNING
-        # =========================
-        update_policy_metrics(policy_id, success, latency)
-        store_learning_event(policy_id, success, latency)
-        update_agent_score(agent_name, success)
+# =========================
+# LEARNING FEEDBACK LOOP
+# =========================
+        try:
+            process_feedback(
+                creative_id=winner["creative_id"],
+                action=final_action,
+                decision=decision_output.get("decision", "unknown"),
+                confidence=float(decision_output.get("confidence", 0)),
+                metrics=winner
+            )
+        except Exception as e:
+            print("[FEEDBACK ERROR]", str(e))
 
-        run_learning_cycle()
+        increment("job_success", 1)
 
-        end_trace(trace)
-
-        return {"job_id": str(job.id), "status": "completed"}
+        return {
+            "status": "success",
+            "decision": decision_output
+        }
 
     except Exception as e:
         db.rollback()
+        increment("job_failure", 1)
 
-        logger.error("executor_error", extra={"error": str(e)}, exc_info=True)
-
-        if job:
-            job.status = "failed"
-            job.error = str(e)
-            db.commit()
-
-        record_failure("global")
+        logger.error("executor_error", extra={
+            "job_id": str(job_id),
+            "error": str(e)
+        })
 
         return {"error": str(e)}
 
     finally:
         db.close()
+        end_trace(trace)

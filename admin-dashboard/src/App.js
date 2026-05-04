@@ -1,275 +1,241 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Login from "./Login";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const API = "http://127.0.0.1:8000";
 
 function App() {
-  const [health, setHealth] = useState({});
-  const [invoices, setInvoices] = useState([]);
-  const [invoiceId, setInvoiceId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token"));
-
-  const [usageLogs, setUsageLogs] = useState([]);
-  const [auditLogs, setAuditLogs] = useState([]);
-
-  const [dashboard, setDashboard] = useState(null); // 🔥 AI SYSTEM
-
-  const [loadingUsage, setLoadingUsage] = useState(false);
-  const [loadingAudit, setLoadingAudit] = useState(false);
-
-  const getTenantId = () => {
-    try {
-      return JSON.parse(atob(token.split(".")[1])).tenant_id;
-    } catch {
-      return null;
-    }
-  };
-
-  const getRole = () => {
-    try {
-      return JSON.parse(atob(token.split(".")[1])).role;
-    } catch {
-      return null;
-    }
-  };
-
-  const [activeTenant, setActiveTenant] = useState(getTenantId());
-
-  const authHeader = {
-    headers: { Authorization: `Bearer ${token}` },
-  };
-
-  // =========================
-  // 🔹 AI DASHBOARD FETCH
-  // =========================
-  const fetchDashboard = async () => {
-    try {
-      const res = await axios.get(`${API}/dashboard`);
-      setDashboard(res.data);
-    } catch (err) {
-      console.error("Dashboard Error:", err);
-    }
-  };
-
-  const runAIJob = async () => {
-    try {
-      await axios.post(
-        `${API}/job`,
-        {
-          type: "ai",
-          payload: { product_id: "test_product" },
-        },
-        {
-          headers: {
-            "x-api-key": "test_key_123",
-          },
-        }
-      );
-      fetchDashboard();
-    } catch (err) {
-      console.error("AI Job Error:", err);
-    }
-  };
-
-  const decisionLogic = (usage) => {
-    if (usage > 25) return "SCALE";
-    if (usage > 10) return "TEST";
-    return "KILL";
-  };
-
-  // =========================
-  // 🔹 EXISTING FUNCTIONS
-  // =========================
-  const fetchInvoices = async () => {
-    try {
-      const res = await axios.get(`${API}/billing/invoices`, authHeader);
-      setInvoices(res.data);
-    } catch (err) {
-      console.error("Invoice Error:", err);
-    }
-  };
-
-  const fetchUsageLogs = async () => {
-    setLoadingUsage(true);
-    try {
-      const res = await axios.get(`${API}/admin/usage`, authHeader);
-      setUsageLogs(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-    setLoadingUsage(false);
-  };
-
-  const fetchAuditLogs = async () => {
-    setLoadingAudit(true);
-    try {
-      const res = await axios.get(`${API}/admin/audit`, authHeader);
-      setAuditLogs(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-    setLoadingAudit(false);
-  };
+  const [creatives, setCreatives] = useState([]);
+  const [actions, setActions] = useState([]);
+  const [policies, setPolicies] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
-    if (!token) return;
-
-    axios.get(`${API}/health`).then((res) => setHealth(res.data));
-    fetchInvoices();
-    fetchUsageLogs();
-    fetchAuditLogs();
-    fetchDashboard();
-
-    const interval = setInterval(fetchDashboard, 5000);
+    fetchAll();
+    const interval = setInterval(fetchAll, 5000); // live refresh
     return () => clearInterval(interval);
-  }, [token]);
+  }, []);
 
-  if (!token) return <Login setToken={setToken} />;
+  const fetchAll = async () => {
+    const [c, a, p] = await Promise.all([
+      axios.get(`${API}/dashboard/creatives`),
+      axios.get(`${API}/dashboard/actions`),
+      axios.get(`${API}/dashboard/policies`),
+    ]);
 
-  const createInvoice = async () => {
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        `${API}/billing/invoice`,
-        null,
-        {
-          params: {
-            tenant_id: activeTenant,
-            plan_id: "pro",
-            amount: 499,
-          },
-          ...authHeader,
-        }
-      );
-
-      setInvoiceId(res.data.invoice_id);
-      fetchInvoices();
-    } catch (err) {
-      console.error(err);
-    }
-    setLoading(false);
+    setCreatives(c.data || []);
+    setActions(a.data || []);
+    setPolicies(p.data || []);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setToken(null);
-  };
+  if (!creatives.length) return <div style={center}>Loading...</div>;
 
-  const winner = dashboard?.top_creatives?.[0];
+  /* ========================= */
+  /* METRICS */
+  /* ========================= */
+
+  const total = creatives.length;
+  const avg_ctr = avg(creatives, "ctr");
+  const avg_roas = avg(creatives, "roas");
+  const avg_cpa = avg(creatives, "cpa");
+
+  const winner = [...creatives].sort((a, b) => b.roas - a.roas)[0];
+
+  const filtered = creatives.filter((c) =>
+    c.creative_id.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  /* ========================= */
+  /* CHART DATA */
+  /* ========================= */
+
+  const chartData = creatives.slice(0, 20).map((c) => ({
+    name: c.creative_id.slice(0, 5),
+    roas: c.roas,
+  }));
 
   return (
-    <div style={{ maxWidth: "1100px", margin: "auto", padding: "20px" }}>
-      <h1>AI Growth OS Dashboard</h1>
+    <div style={container}>
+      {/* HEADER */}
+      <div style={header}>
+        <h1>AI Growth OS</h1>
+        <input
+          placeholder="Search creative..."
+          style={input}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
 
-      <button onClick={logout}>Logout</button>
+      {/* KPI CARDS */}
+      <div style={grid}>
+        <Card label="Total" value={total} />
+        <Card label="CTR" value={avg_ctr} />
+        <Card label="ROAS" value={avg_roas} />
+        <Card label="CPA" value={avg_cpa} />
+      </div>
 
-      {/* =========================
-          🔥 AI SYSTEM PANEL
-      ========================= */}
-      <h2>AI Intelligence</h2>
+      {/* CHART */}
+      <div style={card}>
+        <h3>ROAS Trend</h3>
+        <ResponsiveContainer width="100%" height={250}>
+          <LineChart data={chartData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Line type="monotone" dataKey="roas" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
-      <button onClick={runAIJob}>Run AI Job</button>
+      {/* WINNER */}
+      <div style={{ ...card, background: "#ecfdf5" }}>
+        🏆 Top Performer: {winner?.creative_id}
+      </div>
 
-      {dashboard && (
-        <>
-          <div style={{ display: "flex", gap: "20px", marginTop: "10px" }}>
-            <div>Total Creatives: {dashboard.total_creatives}</div>
-            <div>CTR: {dashboard.performance.avg_ctr.toFixed(2)}</div>
-            <div>ROAS: {dashboard.performance.avg_roas.toFixed(2)}</div>
-            <div>CPA: {dashboard.performance.avg_cpa.toFixed(2)}</div>
+      {/* CREATIVE TABLE */}
+      <div style={card}>
+        <h3>Creative Intelligence</h3>
+
+        <h3>Top Policies</h3>
+        {policies.slice(0, 5).map((p) => (
+          <div key={p.policy_id}>
+            {p.policy_id.slice(0, 8)} → {p.confidence.toFixed(2)}
           </div>
+        ))}
 
-          {winner && (
-            <div style={{ background: "#e6ffe6", marginTop: "10px" }}>
-              🏆 Winner: {winner.creative_id}
-            </div>
-          )}
-
-          <table style={tableStyle}>
-            <thead>
-              <tr>
-                <th style={thStyle}>Creative</th>
-                <th style={thStyle}>Usage</th>
-                <th style={thStyle}>Decision</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dashboard.top_creatives.map((c) => (
-                <tr key={c.creative_id}>
-                  <td style={tdStyle}>{c.creative_id}</td>
-                  <td style={tdStyle}>{c.usage}</td>
-                  <td style={tdStyle}>{decisionLogic(c.usage)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
-      )}
-
-      {/* =========================
-          EXISTING SYSTEM (UNCHANGED)
-      ========================= */}
-
-      <h2>System Health</h2>
-      <pre>{JSON.stringify(health, null, 2)}</pre>
-
-      <h2>Billing</h2>
-
-      <select
-        value={activeTenant}
-        onChange={(e) => setActiveTenant(e.target.value)}
-      >
-        <option value={getTenantId()}>{getTenantId()}</option>
-      </select>
-
-      <button onClick={createInvoice} disabled={loading}>
-        {loading ? "Creating..." : "Create Invoice"}
-      </button>
-
-      {invoiceId && <p>Created: {invoiceId}</p>}
-
-      <h3>Invoices</h3>
-      <table style={tableStyle}>
-        <thead>
-          <tr>
-            <th style={thStyle}>ID</th>
-            <th style={thStyle}>Tenant</th>
-            <th style={thStyle}>Amount</th>
-            <th style={thStyle}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {invoices.map((inv) => (
-            <tr key={inv.id}>
-              <td style={tdStyle}>{inv.id}</td>
-              <td style={tdStyle}>{inv.tenant_id}</td>
-              <td style={tdStyle}>₹{inv.amount}</td>
-              <td style={tdStyle}>{inv.status}</td>
+        <table style={table}>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>CTR</th>
+              <th>ROAS</th>
+              <th>CPA</th>
+              <th>Decision</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {filtered.slice(0, 50).map((c) => (
+              <tr key={c.creative_id}>
+                <td>{c.creative_id.slice(0, 8)}</td>
+                <td>{c.ctr}</td>
+                <td>{c.roas}</td>
+                <td>{c.cpa}</td>
+                <td>
+                  <span style={badge(c.decision)}>{c.decision}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* ACTION STREAM */}
+      <div style={card}>
+        <h3>Live Decisions</h3>
+
+        {actions.slice(0, 10).map((a) => (
+          <div key={a.timestamp} style={log}>
+            <b>{a.action}</b> → {a.decision}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-const tableStyle = {
+/* ========================= */
+/* HELPERS */
+/* ========================= */
+
+const avg = (arr, key) =>
+  (arr.reduce((s, a) => s + a[key], 0) / arr.length).toFixed(2);
+
+/* ========================= */
+/* UI COMPONENTS */
+/* ========================= */
+
+const Card = ({ label, value }) => (
+  <div style={card}>
+    <div style={labelStyle}>{label}</div>
+    <div style={valueStyle}>{value}</div>
+  </div>
+);
+
+/* ========================= */
+/* STYLES */
+/* ========================= */
+
+const container = {
+  padding: "30px",
+  fontFamily: "Inter",
+  background: "#0f172a",
+  color: "white",
+};
+
+const header = {
+  display: "flex",
+  justifyContent: "space-between",
+  marginBottom: "20px",
+};
+
+const input = {
+  padding: "8px",
+  borderRadius: "6px",
+  border: "none",
+};
+
+const grid = {
+  display: "grid",
+  gridTemplateColumns: "repeat(4,1fr)",
+  gap: "20px",
+  marginBottom: "20px",
+};
+
+const card = {
+  background: "#1e293b",
+  padding: "20px",
+  borderRadius: "12px",
+  marginBottom: "20px",
+};
+
+const labelStyle = { color: "#94a3b8" };
+const valueStyle = { fontSize: "24px", fontWeight: "bold" };
+
+const table = {
   width: "100%",
   borderCollapse: "collapse",
-  marginTop: "20px",
 };
 
-const thStyle = {
-  border: "1px solid #ddd",
+const badge = (d) => ({
+  padding: "4px 8px",
+  borderRadius: "6px",
+  background:
+    d === "high_performance"
+      ? "#16a34a"
+      : d === "low_performance"
+        ? "#dc2626"
+        : "#facc15",
+  color: "black",
+});
+
+const log = {
   padding: "8px",
-  backgroundColor: "#f2f2f2",
+  borderBottom: "1px solid #334155",
 };
 
-const tdStyle = {
-  border: "1px solid #ddd",
-  padding: "8px",
+const center = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  height: "100vh",
 };
 
 export default App;

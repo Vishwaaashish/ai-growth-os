@@ -156,6 +156,8 @@ def select_policy(agent_type: str, state: dict):
 
         scored = []
 
+        print(f"[DEBUG] Total scored policies: {len(scored)}")
+
         for p in policies:
             try:
                 metrics = p.get("metrics", {})

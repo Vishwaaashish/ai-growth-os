@@ -1,24 +1,14 @@
-export default function DecisionBadge({ usage }) {
+export default function DecisionBadge({ roas, cpa }) {
   let decision = "KILL";
 
-  if (usage > 25) decision = "SCALE";
-  else if (usage > 10) decision = "TEST";
+  if (roas >= 3 && cpa <= 100) {
+    decision = "SCALE";
+  } else if (roas >= 2) {
+    decision = "TEST";
+  }
 
   const color =
-    decision === "SCALE"
-      ? "green"
-      : decision === "TEST"
-      ? "orange"
-      : "red";
+    decision === "SCALE" ? "green" : decision === "TEST" ? "orange" : "red";
 
-  return (
-    <span style={{
-      color: "white",
-      background: color,
-      padding: "4px 8px",
-      borderRadius: "6px"
-    }}>
-      {decision}
-    </span>
-  );
+  return <span style={{ color, fontWeight: "bold" }}>{decision}</span>;
 }

@@ -4,6 +4,17 @@ from app.db.session import SessionLocal
 from sqlalchemy import text
 from app.core.logger import logger
 
+from fastapi import APIRouter
+from app.services.feedback_worker import process_feedback
+
+router = APIRouter()
+
+@router.get("/run-feedback")
+def run_feedback():
+    process_feedback()
+    return {"status": "feedback_processed"}
+
+
 def update_policy_metrics(policy_id, success, latency=0):
     db = SessionLocal()
 

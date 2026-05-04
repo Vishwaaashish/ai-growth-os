@@ -4,7 +4,9 @@ from app.core.learning.policies.scoring import compute_policy_score
 from app.core.learning.policies.policy_engine import get_fallback_policy
 
 
-# 🔷 CORE DECISION ENGINE (INFRA ACTIONS)
+# =========================================================
+# 🔷 INFRA DECISION ENGINE (SYSTEM ACTIONS)
+# =========================================================
 class DecisionEngine:
     def __init__(self):
         self.infra = InfraManager()
@@ -35,69 +37,100 @@ class DecisionEngine:
             return {"error": str(e)}
 
 
-# 🔷 POLICY DECISION LAYER (PHASE 6.4)
+decision_engine = DecisionEngine()
 
+
+# =========================================================
+# 🔷 POLICY SELECTION (SCORING)
+# =========================================================
 def select_best_policy(policies):
-    """
-    Weighted scoring selection
-    """
     if not policies:
-
         fallback = get_fallback_policy()
         return fallback, [fallback]
 
     scored = []
 
     for p in policies:
-        metrics = p.get("metrics", {})  # SAFE EXTRACTION
+        metrics = p.get("metrics", {})
 
         logger.debug("policy_input", extra={"data": p})
-        logger.debug("extracted_metrics", extra={"data": p.get("metrics")})
+        logger.debug("extracted_metrics", extra={"data": metrics})
 
         score = compute_policy_score(p, metrics)
 
-        # attach score
         p["score"] = round(score, 4)
-
         scored.append(p)
 
-    ranked = sorted(
-        scored,
-        key=lambda x: x.get("score", 0),
-        reverse=True
-    )
+    ranked = sorted(scored, key=lambda x: x.get("score", 0), reverse=True)
 
     return ranked[0], ranked
 
 
 def apply_priority_arbitration(policies):
-    """
-    Priority override layer
-    """
     if not policies:
-
         return get_fallback_policy()
 
-    high_priority = [
-        p for p in policies if p.get("priority", 0) >= 9
-    ]
+    high_priority = [p for p in policies if p.get("priority", 0) >= 9]
 
     if high_priority:
-        return sorted(
-            high_priority,
-            key=lambda x: x.get("priority", 0),
-            reverse=True
-        )[0]
+        return sorted(high_priority, key=lambda x: x.get("priority", 0), reverse=True)[0]
 
     return get_fallback_policy()
 
 
-# 🔷 SINGLE INSTANCE (SYSTEM WIDE)
-decision_engine = DecisionEngine()
+# =========================================================
+# 🔷 PHASE 4.0 — DECISION ENGINE (MARKETING)
+# =========================================================
+
+def map_decision(action):
+    """
+    Deterministic decision mapping (NO ambiguity)
+    """
+    mapping = {
+        "scale": "high_performance",
+        "pause": "low_performance",
+        "optimize": "needs_improvement",
+        "test": "insufficient_data"
+    }
+    return mapping.get(action, "unknown")
+
+# =========================================================
+# 🔷 UNIFIED DECISION ENGINE (STRICT CONTRACT)
+# =========================================================
+
+def decide(ctr, roas, cpa, confidence):
+    """
+    ALWAYS RETURNS:
+    (action, reason)
+    """
+
+    # =========================
+    # LOW CONFIDENCE → FORCE TEST
+    # =========================
+    if confidence < 0.3:
+        return "test", "insufficient_data"
+
+    # =========================
+    # HIGH PERFORMANCE
+    # =========================
+    if roas >= 3 and cpa <= 100:
+        return "scale", "high_performance"
+
+    # =========================
+    # MEDIUM PERFORMANCE
+    # =========================
+    if roas >= 2:
+        return "optimize", "needs_improvement"
+
+    # =========================
+    # LOW PERFORMANCE
+    # =========================
+    return "pause", "low_performance"
 
 
-# 🔷 ASYNC WRAPPERS (AGENT INTERFACE)
-
+# =========================================================
+# 🔷 ASYNC WRAPPERS (AGENTS)
+# =========================================================
 async def scale_up(context):
     return decision_engine.scale_up()
 
@@ -110,33 +143,10 @@ async def optimize_performance(context):
     return decision_engine.optimize_latency()
 
 
+# =========================================================
+# 🔷 TEST BLOCK
+# =========================================================
 if __name__ == "__main__":
-    test_policies = [
-        {
-            "id": "policy_high_success",
-            "priority": 5,
-            "metrics": {
-                "success_rate": 0.9,
-                "failure_count": 1,
-                "total_runs": 10,
-                "avg_latency": 100
-            }
-        },
-        {
-            "id": "policy_high_failure",
-            "priority": 5,
-            "metrics": {
-                "success_rate": 0.3,
-                "failure_count": 7,
-                "total_runs": 10,
-                "avg_latency": 500
-            }
-        }
-    ]
+    test = make_decision(ctr=1.2, roas=2.8, cpa=90, confidence=0.7)
 
-    best, ranked = select_best_policy(test_policies)
-
-    logger.info("final_output", extra={
-        "best_policy": best,
-        "ranked": ranked
-    })
+    logger.info("decision_test", extra=test)

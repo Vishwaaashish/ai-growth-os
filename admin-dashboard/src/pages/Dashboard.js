@@ -6,7 +6,7 @@ import CreativeTable from "../components/CreativeTable";
 import WinnerCard from "../components/WinnerCard";
 
 export default function Dashboard() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
 
   const load = async () => {
     const res = await getDashboard();
@@ -19,10 +19,23 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  if (!data) return <div>Loading...</div>;
+  if (!data.length) return <div>Loading...</div>;
 
-  const { total_creatives, top_creatives, performance } = data;
-  const winner = top_creatives?.[0];
+  // ✅ CALCULATE PERFORMANCE FROM REAL METRICS
+  const total_creatives = data.length;
+
+  const avg_ctr =
+    data.reduce((sum, c) => sum + c.ctr, 0) / total_creatives;
+
+  const avg_roas =
+    data.reduce((sum, c) => sum + c.roas, 0) / total_creatives;
+
+  const avg_cpa =
+    data.reduce((sum, c) => sum + c.cpa, 0) / total_creatives;
+
+  // ✅ SORT BY ROAS (REAL WINNER)
+  const sorted = [...data].sort((a, b) => b.roas - a.roas);
+  const winner = sorted[0];
 
   return (
     <div style={{ padding: 20 }}>
@@ -34,16 +47,16 @@ export default function Dashboard() {
       {/* STATS */}
       <div style={{ display: "flex", gap: 20, marginTop: 20 }}>
         <StatsCard title="Creatives" value={total_creatives} />
-        <StatsCard title="CTR" value={performance.avg_ctr.toFixed(2)} />
-        <StatsCard title="ROAS" value={performance.avg_roas.toFixed(2)} />
-        <StatsCard title="CPA" value={performance.avg_cpa.toFixed(2)} />
+        <StatsCard title="CTR" value={avg_ctr.toFixed(3)} />
+        <StatsCard title="ROAS" value={avg_roas.toFixed(2)} />
+        <StatsCard title="CPA" value={avg_cpa.toFixed(2)} />
       </div>
 
       {/* WINNER */}
       <WinnerCard winner={winner} />
 
       {/* TABLE */}
-      <CreativeTable creatives={top_creatives} />
+      <CreativeTable creatives={sorted} />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+
+
 from app.core.observability.metrics import increment
 from app.worker.executor import execute_job
 
@@ -23,7 +25,16 @@ from app.models.job import Job
 from app.core.logger import logger
 import json
 
+from uuid import uuid4
 
+from rq import Queue
+from redis import Redis
+
+# ✅ Redis connection (must match docker service name)
+redis_conn = Redis(host="redis", port=6379, decode_responses=True)
+
+# ✅ Queue
+q = Queue("default", connection=redis_conn)
 
 router = APIRouter()
 
@@ -179,3 +190,35 @@ def get_job_status(
         "error": job.error,
         "policy_id": job.policy_id,  # ✅ added for visibility
     }
+
+@router.post("/run-job")
+def run_job():
+    db = SessionLocal()
+
+    try:
+        # ✅ CREATE JOB RECORD
+        job = Job(
+            id=uuid4(),
+            type="ai",
+            payload=json.dumps({}),
+            status="queued",
+            tenant_id="local"
+        )
+
+        db.add(job)
+        db.commit()
+        db.refresh(job)
+
+        # ✅ PUSH TO REDIS QUEUE (CRITICAL FIX)
+        q.enqueue("app.worker.executor.execute_job", str(job.id))
+
+        print("JOB ENQUEUED:", job.id)
+
+        return {
+            "status": "job_triggered",
+            "job_id": str(job.id)
+        }
+
+    finally:
+        db.close()
+

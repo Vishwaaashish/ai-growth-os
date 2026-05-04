@@ -2,13 +2,12 @@
 
 cd "$(dirname "$0")/.."
 
-echo "⚙️ Lightweight Restart Initiated..."
+echo "⚙️ Smart Clean Restart Initiated..."
 
 # -------------------------------
-# PORT CLEANUP (SAFE)
+# PORT CLEANUP
 # -------------------------------
-echo "🧹 Checking port 8000..."
-
+echo "🧹 Cleaning port 8000..."
 PID=$(lsof -ti:8000 2>/dev/null)
 
 if [ ! -z "$PID" ]; then
@@ -19,47 +18,46 @@ else
 fi
 
 # -------------------------------
-# SERVICE VALIDATION
-# -------------------------------
-echo "🔍 Detecting services..."
-
-SERVICES=$(docker compose config --services)
-
-echo "📦 Available services:"
-echo "$SERVICES"
-echo ""
-
-# -------------------------------
-# TARGET SERVICES (EDIT IF NEEDED)
+# TARGET SERVICES
 # -------------------------------
 TARGET_SERVICES="api worker learning"
 
-# Validate services exist
-VALID_SERVICES=""
+echo "🔍 Validating services..."
+SERVICES=$(docker compose config --services)
 
+VALID_SERVICES=""
 for svc in $TARGET_SERVICES; do
   if echo "$SERVICES" | grep -q "^$svc$"; then
     VALID_SERVICES="$VALID_SERVICES $svc"
   else
-    echo "⚠️ Service '$svc' NOT FOUND in docker-compose"
+    echo "⚠️ Service '$svc' not found"
   fi
 done
 
 if [ -z "$VALID_SERVICES" ]; then
-  echo "❌ No valid services to restart. Exiting."
+  echo "❌ No valid services found. Exiting."
   exit 1
 fi
 
+# -------------------------------
+# FORCE REMOVE OLD CONTAINERS
+# -------------------------------
 echo ""
-echo "🚀 Restarting services:$VALID_SERVICES"
+echo "🛑 Stopping old containers..."
+docker compose stop $VALID_SERVICES
+
+echo "🧹 Removing old containers..."
+docker compose rm -f $VALID_SERVICES
 
 # -------------------------------
-# RESTART / START LOGIC
+# RESTART SERVICES CLEANLY
 # -------------------------------
+echo ""
+echo "🚀 Starting fresh containers..."
 docker compose up -d $VALID_SERVICES
 
 # -------------------------------
-# STATUS CHECK
+# STATUS
 # -------------------------------
 sleep 2
 
@@ -68,11 +66,5 @@ echo "📊 Service Status:"
 docker compose ps
 
 echo ""
-echo "✅ SYSTEM READY"
+echo "✅ CLEAN RESTART COMPLETE"
 echo "🌐 API: http://localhost:8000/docs"
-
-echo ""
-echo "📄 Logs (if needed):"
-echo "docker compose logs -f api"
-echo "docker compose logs -f worker"
-echo "docker compose logs -f learning"

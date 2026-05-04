@@ -38,7 +38,7 @@ from app.api.routes.metrics import router as metrics_router
 from app.api.routes.job import router as job_router
 from app.api.routes.system_admin_routes import system_admin_router
 from app.api.routes.tenant_admin_routes import tenant_admin_router
-# backend/app/main.py
+
 from app.api.routes.creative import router as creative_router
 from app.api.routes.health_routes import health_router
 from app.core.middleware import TraceMiddleware
@@ -46,11 +46,17 @@ from app.api.routes.auth_routes import auth_router
 from app.api.routes.subscription_routes import subscription_router
 from app.api.routes.billing_routes import billing_router
 from app.api.routes.dashboard import router as dashboard_router
+from app.core.learning.feedback import router as feedback_router
+from app.api.routes.dashboard import router as dashboard_router
+
 
 app = FastAPI()
 
+app.include_router(feedback_router)
+
 app.include_router(job_router)
 app.include_router(metrics_router)
+app.include_router(dashboard_router)
 
 app.include_router(creative_router)
 app.include_router(health_router)
